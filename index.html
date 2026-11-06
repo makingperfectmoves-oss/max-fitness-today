@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Max Fitness Today</title>
+  <style>
+    :root{color-scheme:light;--paper:#f2f5f3;--ink:#183342;--lake:#34656c;--sun:#f5cb72;--rule:#c4d5d0}
+    body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.55 system-ui,sans-serif}
+    main,header>div{max-width:41rem;margin:auto;padding:1.25rem}
+    header{background:var(--ink);color:white;border-bottom:.35rem solid var(--sun)}
+    h1{margin:0;font-size:clamp(2rem,7vw,3.25rem);line-height:1.13;letter-spacing:-.04em}
+    h2{margin:.3rem 0;font-size:1.55rem;line-height:1.25}
+    h3{margin:1.25rem 0 .25rem;font-size:1.06rem}
+    p{margin:.4rem 0 .85rem}
+    .controls{display:flex;flex-wrap:wrap;gap:1rem;margin:.2rem 0 1.2rem}
+    label{display:grid;gap:.22rem;font-weight:600}
+    input,select{font:inherit;color:inherit;background:white;border:1px solid var(--lake);border-radius:.3rem;padding:.4rem}
+    :focus-visible{outline:.18rem solid #9c5700;outline-offset:.2rem}
+    article,details{border-top:1px solid var(--rule);padding-top:.8rem}
+    li{padding:.22rem 0}.cue{display:block;color:#35515b}
+    a{color:#1d5660}footer{margin-top:1.5rem;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <header><div><h1>Max Fitness Today</h1><p id="calendar-label">The workout for today in Eastern time</p></div></header>
+  <main>
+    <div class="controls">
+      <label>Date<input type="date" id="date"></label>
+      <label>Program week<select id="week" aria-describedby="progression"></select></label>
+      <label>Strength location<select id="location"><option value="home">Home</option><option value="gym">Gym</option></select></label>
+    </div>
+    <p id="progression">The card starts at Week 1. Select a later week when you have cleared the progression gate in your private program.</p>
+    <article id="card" aria-live="polite"><p>Loading the program.</p></article>
+    <footer><a href="./program.json">Download the full program data</a></footer>
+    <noscript><p>Use the program data to read today’s Eastern weekday and your chosen program week.</p></noscript>
+  </main>
+  <script type="module" src="./card.mjs"></script>
+</body>
+</html>
