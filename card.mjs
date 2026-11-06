@@ -55,7 +55,7 @@ async function start() {
     list('Strength', (day.strength?.[location.value] ?? []).map(x => [x.name + ' · ' + x.sets + ' × ' + x.reps + ' · Rest ' + x.rest + ' · ' + x.repsLeft, [x.start,x.move,x.finish,x.avoid,x.limitation].filter(Boolean).join(' ')]));
     list('Optional mobility and recovery', routine(day.routine));
     list('Cooldown', routine(day.cooldown));
-    if (day.mental.duration) list('Mental practice', [[day.mental.duration, day.mental.label || day.mental.title || '']]);
+    if (day.mental.duration) list('Mental practice', [[day.mental.name, day.mental.duration]]);
   }
   for (const control of [date, week, location]) control.addEventListener('change', render);
   render();
