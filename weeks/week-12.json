@@ -21,7 +21,12 @@
    "safety": "6:00 is still dark until about 6:40: front and rear lights on.",
    "swap": true,
    "date": "2027-02-01",
-   "weekday": "Monday"
+   "weekday": "Monday",
+   "mental": {
+    "name": "Dr Julie · Mindfulness",
+    "url": "https://www.youtube.com/watch?v=svVDEkBQxpU",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Tuesday": {
    "kind": "lift",
@@ -112,7 +117,7 @@
      "sets": 2,
      "reps": "5–10",
      "rest": 120,
-     "cue": "Start from a full hang, pull your chest toward the bar, lower slowly. If you get fewer than 5, do slow 5-second lowerings instead.",
+     "cue": "Start from a full hang, pull your chest toward the bar, lower slowly. If you get fewer than 5, jump to the top and lower slowly for 5 seconds instead (no band needed).",
      "home": "Your pull-up bar.",
      "gym": "Pull-ups, or lat pulldown for 8–10.",
      "source": "Jeff Nippard · CaliMove",
@@ -185,7 +190,12 @@
    ],
    "swap": false,
    "date": "2027-02-02",
-   "weekday": "Tuesday"
+   "weekday": "Tuesday",
+   "mental": {
+    "name": "Calm · Be Present",
+    "url": "https://www.youtube.com/watch?v=ZToicYcHIOU",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Wednesday": {
    "kind": "ride",
@@ -202,7 +212,12 @@
    "safety": "6:00 is still dark until about 6:40: front and rear lights on.",
    "swap": true,
    "date": "2027-02-03",
-   "weekday": "Wednesday"
+   "weekday": "Wednesday",
+   "mental": {
+    "name": "Priory · Body Scan",
+    "url": "https://www.youtube.com/watch?v=aH72AScs0qk",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Thursday": {
    "kind": "lift",
@@ -305,7 +320,7 @@
      "reps": "3–5 slow lowerings",
      "rest": 90,
      "cue": "Kneel on a cushion with your heels anchored, lower your body forward as slowly as you can, catch yourself with your hands, push back up.",
-     "home": "Heels hooked under the bed frame or a heavy couch.",
+     "home": "Heels hooked under the bed frame or a heavy couch. No safe anchor: single-leg glute bridge, 3 × 10 per side.",
      "gym": "Nordic bench, or lying leg curl for 8–12.",
      "source": "Knees Over Toes",
      "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+nordic+curl+progression"
@@ -377,7 +392,12 @@
    ],
    "swap": false,
    "date": "2027-02-04",
-   "weekday": "Thursday"
+   "weekday": "Thursday",
+   "mental": {
+    "name": "Dr Julie · Mindfulness",
+    "url": "https://www.youtube.com/watch?v=svVDEkBQxpU",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Friday": {
    "kind": "intervals",
@@ -394,7 +414,12 @@
    "safety": "Pick a quiet stretch of road with no stop lights for the hard rounds. Lights on in the dark.",
    "swap": true,
    "date": "2027-02-05",
-   "weekday": "Friday"
+   "weekday": "Friday",
+   "mental": {
+    "name": "Calm · Be Present",
+    "url": "https://www.youtube.com/watch?v=ZToicYcHIOU",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Saturday": {
    "kind": "rest",
@@ -414,7 +439,12 @@
    "source": "JR Stretch · CaliMove · Movement by David · Huberman",
    "swap": false,
    "date": "2027-02-06",
-   "weekday": "Saturday"
+   "weekday": "Saturday",
+   "mental": {
+    "name": "Priory · Body Scan",
+    "url": "https://www.youtube.com/watch?v=aH72AScs0qk",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   },
   "Sunday": {
    "kind": "rest",
@@ -434,7 +464,12 @@
    "source": "JR Stretch · CaliMove · Movement by David · Huberman",
    "swap": false,
    "date": "2027-02-07",
-   "weekday": "Sunday"
+   "weekday": "Sunday",
+   "mental": {
+    "name": "Dr Julie · Mindfulness",
+    "url": "https://www.youtube.com/watch?v=svVDEkBQxpU",
+    "dose": "3–5 min, after the workout or any time today"
+   }
   }
  },
  "swap": {
@@ -455,5 +490,9 @@
   "Get outside light within an hour of waking, 5–10 min (more if cloudy).",
   "Drink a glass of water before you train.",
   "Protein with breakfast after training."
+ ],
+ "rules": [
+  "Missed a lifting day? Do it the next day and push the rest of the week along. Never two lifting days back to back, never two workouts in one day.",
+  "Rain or lightning at ride time: do the kettlebell circuit instead."
  ]
 }
