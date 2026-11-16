@@ -121,7 +121,10 @@ function renderDay(week, day) {
     if (day.optional) parts.push(el('section', {}, el('details', {}, el('summary', {}, day.optional.title),
       el('ol', { class: 'steps' }, day.optional.how.map(x => el('li', {}, x))), el('p', { class: 'note' }, day.optional.note), el('p', { class: 'src' }, 'Source: ' + day.optional.source))));
   }
-  parts.push(el('section', {}, el('h3', {}, 'Every day'), el('ul', { class: 'steps' }, week.daily.map(x => el('li', {}, x))),
+  if (day.baseline) parts.splice(1, 0, el('section', {}, el('p', { class: 'safety' }, day.baseline)));
+  if (day.mental) parts.push(el('section', {}, el('h3', {}, 'Mental practice'),
+    el('p', {}, el('a', { href: day.mental.url, target: '_blank', rel: 'noopener' }, day.mental.name), ` · ${day.mental.dose}`)));
+  parts.push(el('section', {}, el('h3', {}, 'Every day'), el('ul', { class: 'steps' }, [...week.daily, ...(week.rules || [])].map(x => el('li', {}, x))),
     el('p', { class: 'note' }, 'After your workout, reply to Duet: "done", "skip", or your numbers, e.g. "squat 50 for 10, 10, 9".')));
   main.replaceChildren(...parts);
 }

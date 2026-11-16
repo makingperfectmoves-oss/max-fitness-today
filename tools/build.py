@@ -80,7 +80,7 @@ def lift_a(deload):
         lift("Press", s, "8–10", 120, "Shoulder blades pulled back, lower slowly, press up without bouncing.",
              "Dumbbell floor press, lying on the floor, knees bent.", "Dumbbell bench press on a flat bench.",
              "Jeff Nippard · ATHLEAN-X", "ATHLEAN-X dumbbell floor press"),
-        lift("Pull-up", s, "5–10", 120, "Start from a full hang, pull your chest toward the bar, lower slowly. If you get fewer than 5, do slow 5-second lowerings instead.",
+        lift("Pull-up", s, "5–10", 120, "Start from a full hang, pull your chest toward the bar, lower slowly. If you get fewer than 5, jump to the top and lower slowly for 5 seconds instead (no band needed).",
              "Your pull-up bar.", "Pull-ups, or lat pulldown for 8–10.",
              "Jeff Nippard · CaliMove", "Jeff Nippard pull up technique"),
         lift("Romanian deadlift", s, "8–10", 120, "Soft knees, push your hips back, bar slides down the thighs until the hamstrings stretch, stand up tall.",
@@ -111,7 +111,7 @@ def lift_b(deload):
              "Bent-over barbell row, or one-arm dumbbell row with a hand on the chair.", "Chest-supported row or cable row.",
              "Jeff Nippard · ATHLEAN-X", "Jeff Nippard barbell row"),
         lift("Nordic curl", 2, "3–5 slow lowerings", 90, "Kneel on a cushion with your heels anchored, lower your body forward as slowly as you can, catch yourself with your hands, push back up.",
-             "Heels hooked under the bed frame or a heavy couch.", "Nordic bench, or lying leg curl for 8–12.",
+             "Heels hooked under the bed frame or a heavy couch. No safe anchor: single-leg glute bridge, 3 × 10 per side.", "Nordic bench, or lying leg curl for 8–12.",
              "Knees Over Toes", "Knees Over Toes Guy nordic curl progression"),
         lift("Curl and triceps", 2, "10–12 each", 60, "Do one set of curls, then one set of overhead triceps extensions, then rest.",
              "Dumbbell curls, then an overhead dumbbell extension.", "Cable or dumbbell curls, then cable overhead extension.",
@@ -209,6 +209,17 @@ LIFT_C = {
     "source": "Jeff Nippard (training frequency)",
 }
 
+MENTAL = [
+    {"name": "Calm · Be Present", "url": "https://www.youtube.com/watch?v=ZToicYcHIOU"},
+    {"name": "Priory · Body Scan", "url": "https://www.youtube.com/watch?v=aH72AScs0qk"},
+    {"name": "Dr Julie · Mindfulness", "url": "https://www.youtube.com/watch?v=svVDEkBQxpU"},
+]
+
+RULES = [
+    "Missed a lifting day? Do it the next day and push the rest of the week along. Never two lifting days back to back, never two workouts in one day.",
+    "Rain or lightning at ride time: do the kettlebell circuit instead.",
+]
+
 DAILY = [
     "Get outside light within an hour of waking, 5–10 min (more if cloudy).",
     "Drink a glass of water before you train.",
@@ -240,8 +251,13 @@ def build_week(w):
                 d = dict(REST, optional=LIFT_C)
         d = dict(d, date=date.isoformat(), weekday=name)
         days[name] = d
+    for i, d in enumerate(days.values()):
+        m = MENTAL[((w - 1) * 7 + i) % len(MENTAL)]
+        d["mental"] = dict(m, dose="3–5 min, after the workout or any time today")
+    if w == 1:
+        days["Tuesday"]["baseline"] = "Week 1 baseline: write down your weights for each lift, and at the end do one set of max pull-ups and one max dead hang. Tell Duet the numbers."
     return {"week": w, "phase": {"id": phase_id, "name": phase_name, "rule": rule},
-            "days": days, "swap": SWAP, "daily": DAILY}
+            "days": days, "swap": SWAP, "daily": DAILY, "rules": RULES}
 
 
 def brief_line(w, d):
