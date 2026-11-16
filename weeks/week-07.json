@@ -1,0 +1,467 @@
+{
+ "week": 7,
+ "phase": {
+  "id": "build",
+  "name": "Build again",
+  "rule": "Back to full sets. Start from week 5's weights."
+ },
+ "days": {
+  "Monday": {
+   "kind": "ride",
+   "title": "Easy ride",
+   "minutes": 60,
+   "summary": "60 min at talking pace (Zone 2).",
+   "how": [
+    "First 5 min very easy.",
+    "Then 50 min steady: you could hold a conversation in full sentences. If you can't, slow down.",
+    "Last 5 min very easy."
+   ],
+   "why": "Easy riding builds the heart's base and burns fat without eating into your lifting. Most of your cardio should feel this easy.",
+   "source": "Zone 2 research (Attia, Huberman)",
+   "safety": "6:00 is still dark until about 6:40: front and rear lights on.",
+   "swap": true,
+   "date": "2026-12-28",
+   "weekday": "Monday"
+  },
+  "Tuesday": {
+   "kind": "lift",
+   "title": "Lift A · full body",
+   "minutes": 60,
+   "summary": "Squat · press · pull-up · Romanian deadlift · split squat · ab wheel · carry",
+   "warmup": [
+    {
+     "name": "Backward walk",
+     "dose": "2 min",
+     "cue": "Small steps, stay on the balls of your feet, let the front of the thighs work.",
+     "home": "Hallway, driveway or a quiet sidewalk.",
+     "gym": "Treadmill walking backward on low speed, or a backward sled drag.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+backward+walking"
+    },
+    {
+     "name": "Tibialis raise",
+     "dose": "2 × 20",
+     "cue": "Back against a wall, heels forward, lift your toes toward your shins and lower slowly.",
+     "home": "Against any wall.",
+     "gym": "Same, or a tib bar.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+tibialis+raise+wall"
+    },
+    {
+     "name": "Knee-over-toe split squat",
+     "dose": "1 × 8 per side",
+     "cue": "Long split stance, front knee travels past the toes, back knee comes close to the floor. Hold the pull-up bar or a wall for balance.",
+     "home": "Bodyweight, holding a door frame or the pull-up bar.",
+     "gym": "Bodyweight, hold a rack for balance.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+ATG+split+squat"
+    },
+    {
+     "name": "Patrick step",
+     "dose": "1 × 10 per side",
+     "cue": "Stand on a low step, slowly lower the other heel to the floor by bending the standing knee forward over the toes.",
+     "home": "Bottom stair or a sturdy book stack.",
+     "gym": "Aerobic step or a low plate stack.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+Patrick+step"
+    },
+    {
+     "name": "Couch stretch",
+     "dose": "45 sec per side",
+     "cue": "Back knee on a cushion against the wall or couch, squeeze the glute, stay tall.",
+     "home": "Against the couch or a wall.",
+     "gym": "Against a bench.",
+     "source": "Knees Over Toes · mobility",
+     "demo": "https://www.youtube.com/results?search_query=couch+stretch+hip+flexor"
+    },
+    {
+     "name": "Dead hang",
+     "dose": "2 × 20–30 sec",
+     "cue": "Hang from the pull-up bar, shoulders relaxed, breathe slowly.",
+     "home": "Your pull-up bar.",
+     "gym": "Pull-up bar.",
+     "source": "ATHLEAN-X · Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=dead+hang+shoulder+health"
+    }
+   ],
+   "lifts": [
+    {
+     "name": "Squat",
+     "sets": 3,
+     "reps": "8–10",
+     "rest": 120,
+     "cue": "Sit down between your hips, whole foot on the floor, chest up, stand up smoothly.",
+     "home": "Goblet squat holding one heavy dumbbell or kettlebell at your chest.",
+     "gym": "Barbell back squat in a rack with safeties, 6–8 reps.",
+     "source": "Jeff Nippard · ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+goblet+squat"
+    },
+    {
+     "name": "Press",
+     "sets": 3,
+     "reps": "8–10",
+     "rest": 120,
+     "cue": "Shoulder blades pulled back, lower slowly, press up without bouncing.",
+     "home": "Dumbbell floor press, lying on the floor, knees bent.",
+     "gym": "Dumbbell bench press on a flat bench.",
+     "source": "Jeff Nippard · ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=ATHLEAN-X+dumbbell+floor+press"
+    },
+    {
+     "name": "Pull-up",
+     "sets": 3,
+     "reps": "5–10",
+     "rest": 120,
+     "cue": "Start from a full hang, pull your chest toward the bar, lower slowly. If you get fewer than 5, do slow 5-second lowerings instead.",
+     "home": "Your pull-up bar.",
+     "gym": "Pull-ups, or lat pulldown for 8–10.",
+     "source": "Jeff Nippard · CaliMove",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+pull+up+technique"
+    },
+    {
+     "name": "Romanian deadlift",
+     "sets": 3,
+     "reps": "8–10",
+     "rest": 120,
+     "cue": "Soft knees, push your hips back, bar slides down the thighs until the hamstrings stretch, stand up tall.",
+     "home": "Barbell (or two dumbbells) from standing.",
+     "gym": "Barbell Romanian deadlift.",
+     "source": "Jeff Nippard",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+romanian+deadlift"
+    },
+    {
+     "name": "Bulgarian split squat",
+     "sets": 2,
+     "reps": "8–10 per side",
+     "rest": 90,
+     "cue": "Back foot on the chair seat, front knee may travel over the toes, lower under control.",
+     "home": "Back foot on the chair, dumbbells in hands when bodyweight gets easy.",
+     "gym": "Back foot on a bench, dumbbells.",
+     "source": "Knees Over Toes · Jeff Nippard",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+bulgarian+split+squat"
+    },
+    {
+     "name": "Ab wheel rollout",
+     "sets": 3,
+     "reps": "6–10",
+     "rest": 60,
+     "cue": "From your knees, ribs down, roll out only as far as you can keep your lower back from sagging.",
+     "home": "Your ab wheel.",
+     "gym": "Ab wheel or cable crunch.",
+     "source": "ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=ATHLEAN-X+ab+wheel+rollout"
+    },
+    {
+     "name": "Farmer carry",
+     "sets": 2,
+     "reps": "40 m (about 45 sec)",
+     "rest": 60,
+     "cue": "Heavy weight in each hand, walk tall, short quick steps.",
+     "home": "Two kettlebells.",
+     "gym": "Heavy dumbbells or a trap bar.",
+     "source": "ATHLEAN-X · longevity research",
+     "demo": "https://www.youtube.com/results?search_query=farmer+carry+technique"
+    }
+   ],
+   "cooldown": [
+    {
+     "name": "Slow breathing",
+     "dose": "1 min",
+     "cue": "Lie down, breathe out longer than you breathe in.",
+     "source": "Huberman"
+    },
+    {
+     "name": "Deep squat hold",
+     "dose": "45 sec",
+     "cue": "Hold the pull-up bar or a door frame, sink into the bottom of a squat, heels down if you can.",
+     "source": "CaliMove · Movement by David"
+    },
+    {
+     "name": "Hamstring and chest stretch",
+     "dose": "30 sec each side",
+     "cue": "Easy stretch, no bouncing.",
+     "source": "JR Stretch"
+    }
+   ],
+   "swap": false,
+   "date": "2026-12-29",
+   "weekday": "Tuesday"
+  },
+  "Wednesday": {
+   "kind": "ride",
+   "title": "Easy ride",
+   "minutes": 60,
+   "summary": "60 min at talking pace (Zone 2).",
+   "how": [
+    "First 5 min very easy.",
+    "Then 50 min steady: you could hold a conversation in full sentences. If you can't, slow down.",
+    "Last 5 min very easy."
+   ],
+   "why": "Easy riding builds the heart's base and burns fat without eating into your lifting. Most of your cardio should feel this easy.",
+   "source": "Zone 2 research (Attia, Huberman)",
+   "safety": "6:00 is still dark until about 6:40: front and rear lights on.",
+   "swap": true,
+   "date": "2026-12-30",
+   "weekday": "Wednesday"
+  },
+  "Thursday": {
+   "kind": "lift",
+   "title": "Lift B · full body",
+   "minutes": 60,
+   "summary": "Deadlift · overhead press · row · Nordic curl · arms · knee raise · side plank · carry",
+   "warmup": [
+    {
+     "name": "Backward walk",
+     "dose": "2 min",
+     "cue": "Small steps, stay on the balls of your feet, let the front of the thighs work.",
+     "home": "Hallway, driveway or a quiet sidewalk.",
+     "gym": "Treadmill walking backward on low speed, or a backward sled drag.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+backward+walking"
+    },
+    {
+     "name": "Tibialis raise",
+     "dose": "2 × 20",
+     "cue": "Back against a wall, heels forward, lift your toes toward your shins and lower slowly.",
+     "home": "Against any wall.",
+     "gym": "Same, or a tib bar.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+tibialis+raise+wall"
+    },
+    {
+     "name": "Knee-over-toe split squat",
+     "dose": "1 × 8 per side",
+     "cue": "Long split stance, front knee travels past the toes, back knee comes close to the floor. Hold the pull-up bar or a wall for balance.",
+     "home": "Bodyweight, holding a door frame or the pull-up bar.",
+     "gym": "Bodyweight, hold a rack for balance.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+ATG+split+squat"
+    },
+    {
+     "name": "Patrick step",
+     "dose": "1 × 10 per side",
+     "cue": "Stand on a low step, slowly lower the other heel to the floor by bending the standing knee forward over the toes.",
+     "home": "Bottom stair or a sturdy book stack.",
+     "gym": "Aerobic step or a low plate stack.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+Patrick+step"
+    },
+    {
+     "name": "Couch stretch",
+     "dose": "45 sec per side",
+     "cue": "Back knee on a cushion against the wall or couch, squeeze the glute, stay tall.",
+     "home": "Against the couch or a wall.",
+     "gym": "Against a bench.",
+     "source": "Knees Over Toes · mobility",
+     "demo": "https://www.youtube.com/results?search_query=couch+stretch+hip+flexor"
+    },
+    {
+     "name": "Dead hang",
+     "dose": "2 × 20–30 sec",
+     "cue": "Hang from the pull-up bar, shoulders relaxed, breathe slowly.",
+     "home": "Your pull-up bar.",
+     "gym": "Pull-up bar.",
+     "source": "ATHLEAN-X · Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=dead+hang+shoulder+health"
+    }
+   ],
+   "lifts": [
+    {
+     "name": "Deadlift",
+     "sets": 3,
+     "reps": "5–6",
+     "rest": 150,
+     "cue": "Bar over the middle of your foot, flat back, push the floor away, stand tall, lower with control.",
+     "home": "Barbell from the floor.",
+     "gym": "Barbell or trap bar deadlift.",
+     "source": "Jeff Nippard · ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+deadlift+technique"
+    },
+    {
+     "name": "Overhead press",
+     "sets": 3,
+     "reps": "8–10",
+     "rest": 120,
+     "cue": "Ribs down, press straight up, head through at the top.",
+     "home": "Seated dumbbell press, back against the chair.",
+     "gym": "Standing dumbbell or barbell overhead press.",
+     "source": "Jeff Nippard · ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+seated+dumbbell+shoulder+press"
+    },
+    {
+     "name": "Row",
+     "sets": 3,
+     "reps": "8–10",
+     "rest": 90,
+     "cue": "Flat back, pull the elbows toward your hips, pause, lower slowly.",
+     "home": "Bent-over barbell row, or one-arm dumbbell row with a hand on the chair.",
+     "gym": "Chest-supported row or cable row.",
+     "source": "Jeff Nippard · ATHLEAN-X",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+barbell+row"
+    },
+    {
+     "name": "Nordic curl",
+     "sets": 2,
+     "reps": "3–5 slow lowerings",
+     "rest": 90,
+     "cue": "Kneel on a cushion with your heels anchored, lower your body forward as slowly as you can, catch yourself with your hands, push back up.",
+     "home": "Heels hooked under the bed frame or a heavy couch.",
+     "gym": "Nordic bench, or lying leg curl for 8–12.",
+     "source": "Knees Over Toes",
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+nordic+curl+progression"
+    },
+    {
+     "name": "Curl and triceps",
+     "sets": 2,
+     "reps": "10–12 each",
+     "rest": 60,
+     "cue": "Do one set of curls, then one set of overhead triceps extensions, then rest.",
+     "home": "Dumbbell curls, then an overhead dumbbell extension.",
+     "gym": "Cable or dumbbell curls, then cable overhead extension.",
+     "source": "Jeff Nippard",
+     "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+arms+dumbbell"
+    },
+    {
+     "name": "Hanging knee raise",
+     "sets": 3,
+     "reps": "8–12",
+     "rest": 60,
+     "cue": "Hang from the bar, curl your knees toward your chest, lower slowly, no swinging.",
+     "home": "Your pull-up bar.",
+     "gym": "Captain's chair or pull-up bar.",
+     "source": "ATHLEAN-X · CaliMove",
+     "demo": "https://www.youtube.com/results?search_query=ATHLEAN-X+hanging+knee+raise"
+    },
+    {
+     "name": "Side plank",
+     "sets": 2,
+     "reps": "30 sec per side",
+     "rest": 45,
+     "cue": "Elbow under the shoulder, body in a straight line, breathe.",
+     "home": "On the floor.",
+     "gym": "On the floor.",
+     "source": "McGill Big 3",
+     "demo": "https://www.youtube.com/results?search_query=McGill+side+plank"
+    },
+    {
+     "name": "Suitcase carry",
+     "sets": 2,
+     "reps": "30 m per side",
+     "rest": 60,
+     "cue": "One heavy weight in one hand, stay perfectly upright.",
+     "home": "One kettlebell.",
+     "gym": "One heavy dumbbell.",
+     "source": "ATHLEAN-X · longevity research",
+     "demo": "https://www.youtube.com/results?search_query=suitcase+carry"
+    }
+   ],
+   "cooldown": [
+    {
+     "name": "Slow breathing",
+     "dose": "1 min",
+     "cue": "Lie down, breathe out longer than you breathe in.",
+     "source": "Huberman"
+    },
+    {
+     "name": "Deep squat hold",
+     "dose": "45 sec",
+     "cue": "Hold the pull-up bar or a door frame, sink into the bottom of a squat, heels down if you can.",
+     "source": "CaliMove · Movement by David"
+    },
+    {
+     "name": "Hamstring and chest stretch",
+     "dose": "30 sec each side",
+     "cue": "Easy stretch, no bouncing.",
+     "source": "JR Stretch"
+    }
+   ],
+   "swap": false,
+   "date": "2026-12-31",
+   "weekday": "Thursday"
+  },
+  "Friday": {
+   "kind": "intervals",
+   "title": "Norwegian 4×4",
+   "minutes": 43,
+   "summary": "4 rounds of 4 min hard, 3 min easy.",
+   "how": [
+    "10 min warm-up, building from easy to moderate.",
+    "4 rounds: 4 min hard at 8–9 out of 10 (only a few words at a time), then 3 min easy spinning.",
+    "5–10 min easy cool-down."
+   ],
+   "why": "Once a week, this is the best-studied way to raise heart fitness (VO2 max), one of the strongest markers of long life.",
+   "source": "Norwegian 4×4 (Helgerud et al.)",
+   "safety": "Pick a quiet stretch of road with no stop lights for the hard rounds. Lights on in the dark.",
+   "swap": true,
+   "date": "2027-01-01",
+   "weekday": "Friday"
+  },
+  "Saturday": {
+   "kind": "rest",
+   "title": "Rest or mobility",
+   "minutes": 15,
+   "summary": "Optional 15 min mobility and a walk in the morning light. Rest is fine too.",
+   "how": [
+    "Cat-cow, 10 slow reps",
+    "World's greatest stretch, 5 per side",
+    "90/90 hip switches, 10",
+    "Deep squat hold, 1 min",
+    "Thoracic rotations, 8 per side",
+    "Dead hang, 30 sec",
+    "Then a 20–30 min walk outside, ideally in early sunlight."
+   ],
+   "why": "Moving every joint through its full range keeps it that way. Morning light helps sleep and energy.",
+   "source": "JR Stretch · CaliMove · Movement by David · Huberman",
+   "swap": false,
+   "optional": {
+    "title": "Optional Lift C (Saturday, 30 min)",
+    "how": [
+     "3 rounds: 8–12 push-ups, 5–8 chin-ups, 10 goblet squats, 15 kettlebell swings. Rest 90 sec between rounds."
+    ],
+    "note": "Only if you feel fresh. A third lifting day builds muscle faster.",
+    "source": "Jeff Nippard (training frequency)"
+   },
+   "date": "2027-01-02",
+   "weekday": "Saturday"
+  },
+  "Sunday": {
+   "kind": "rest",
+   "title": "Rest or mobility",
+   "minutes": 15,
+   "summary": "Optional 15 min mobility and a walk in the morning light. Rest is fine too.",
+   "how": [
+    "Cat-cow, 10 slow reps",
+    "World's greatest stretch, 5 per side",
+    "90/90 hip switches, 10",
+    "Deep squat hold, 1 min",
+    "Thoracic rotations, 8 per side",
+    "Dead hang, 30 sec",
+    "Then a 20–30 min walk outside, ideally in early sunlight."
+   ],
+   "why": "Moving every joint through its full range keeps it that way. Morning light helps sleep and energy.",
+   "source": "JR Stretch · CaliMove · Movement by David · Huberman",
+   "swap": false,
+   "date": "2027-01-03",
+   "weekday": "Sunday"
+  }
+ },
+ "swap": {
+  "title": "Bad-weather swap: kettlebell circuit",
+  "how": [
+   "5 rounds, 1 min rest between rounds (about 25 min):",
+   "15 kettlebell swings",
+   "8 goblet squats",
+   "8 push-ups",
+   "30 sec plank",
+   "40 m kettlebell carry",
+   "Optional: 20–30 min walk after."
+  ],
+  "note": "Keep it moderate, about 6–7 out of 10, so you're fresh for the lifting days.",
+  "source": "ATHLEAN-X · CaliMove"
+ },
+ "daily": [
+  "Get outside light within an hour of waking, 5–10 min (more if cloudy).",
+  "Drink a glass of water before you train.",
+  "Protein with breakfast after training."
+ ]
+}
