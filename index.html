@@ -2,39 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1a20">
   <title>Max Fitness Today</title>
   <style>
-    :root{color-scheme:light;--paper:#f2f5f3;--ink:#183342;--lake:#34656c;--sun:#f5cb72;--rule:#c4d5d0}
-    body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.55 system-ui,sans-serif}
-    main,header>div{max-width:41rem;margin:auto;padding:1.25rem}
-    header{background:var(--ink);color:white;border-bottom:.35rem solid var(--sun)}
-    h1{margin:0;font-size:clamp(2rem,7vw,3.25rem);line-height:1.13;letter-spacing:-.04em}
-    h2{margin:.3rem 0;font-size:1.55rem;line-height:1.25}
-    h3{margin:1.25rem 0 .25rem;font-size:1.06rem}
-    p{margin:.4rem 0 .85rem}
-    .controls{display:flex;flex-wrap:wrap;gap:1rem;margin:.2rem 0 1.2rem}
-    label{display:grid;gap:.22rem;font-weight:600}
-    input,select{font:inherit;color:inherit;background:white;border:1px solid var(--lake);border-radius:.3rem;padding:.4rem}
-    :focus-visible{outline:.18rem solid #9c5700;outline-offset:.2rem}
-    article,details{border-top:1px solid var(--rule);padding-top:.8rem}
-    li{padding:.22rem 0}.cue{display:block;color:#35515b}
-    a{color:#1d5660}footer{margin-top:1.5rem;font-size:.9rem}
+    :root{
+      --bg:#f3f5f4;--card:#ffffff;--ink:#14232b;--soft:#4f6570;--line:#d8e1df;
+      --accent:#1f7a6d;--accent-ink:#ffffff;--warm:#c9861a;--chip:#e6efed;--done:#e3f3ec;
+      color-scheme:light;
+    }
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme="light"]){
+        --bg:#0f1a20;--card:#17252d;--ink:#eaf1f2;--soft:#a3b5bb;--line:#2a3b44;
+        --accent:#3fb8a4;--accent-ink:#0b1418;--warm:#f0b450;--chip:#21333c;--done:#173a31;
+        color-scheme:dark;
+      }
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+    .wrap{max-width:40rem;margin:0 auto;padding:0 16px 48px}
+    header{padding:20px 0 8px}
+    .kicker{color:var(--soft);font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+    h1{margin:.1rem 0 .2rem;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em}
+    .sub{color:var(--soft);margin:0}
+    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:16px 0 8px}
+    .days button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 0;font:inherit;font-size:.8rem;line-height:1.2;cursor:pointer}
+    .days button b{display:block;font-size:1rem}
+    .days button.today{border-color:var(--warm)}
+    .days button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+    .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:8px 0 4px}
+    .seg{display:inline-flex;background:var(--chip);border-radius:999px;padding:3px}
+    .seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:.9rem;padding:6px 14px;border-radius:999px;cursor:pointer}
+    .seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:600}
+    .phase{background:var(--chip);border-radius:14px;padding:10px 14px;margin:12px 0;font-size:.92rem}
+    .phase b{display:block}
+    section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+    h2{margin:0 0 4px;font-size:1.35rem;line-height:1.25}
+    h3{margin:0 0 8px;font-size:1.05rem}
+    .meta{color:var(--soft);margin:0 0 4px}
+    ol.steps{margin:6px 0 0;padding-left:1.25rem}
+    ol.steps li{margin:4px 0}
+    .ex{border-top:1px solid var(--line);padding:12px 0}
+    .ex:first-of-type{border-top:0;padding-top:4px}
+    .ex-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+    .ex-name{font-weight:700;font-size:1.05rem}
+    .dose{color:var(--soft);font-size:.92rem;white-space:nowrap}
+    .variant{margin:6px 0;padding:8px 10px;background:var(--chip);border-radius:10px;font-size:.95rem}
+    .variant .tag{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-right:6px}
+    .cue{color:var(--soft);font-size:.93rem;margin:4px 0}
+    .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+    .set{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+    .set[aria-pressed="true"]{background:var(--done);border-color:var(--accent);color:var(--accent)}
+    .mini{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:.85rem;padding:8px 10px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+    .src{font-size:.78rem;color:var(--soft)}
+    .note{font-size:.92rem;color:var(--soft)}
+    .safety{font-size:.92rem;border-left:3px solid var(--warm);padding-left:10px;margin:10px 0 0}
+    details summary{cursor:pointer;font-weight:600;padding:2px 0}
+    .timer{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 18px;border-radius:999px;font-weight:700;font-size:1.1rem;box-shadow:0 4px 16px rgba(0,0,0,.25);display:none;border:0;font-family:inherit}
+    .timer.on{display:block}
+    footer{color:var(--soft);font-size:.82rem;margin-top:24px}
+    footer a{color:inherit}
+    :focus-visible{outline:3px solid var(--warm);outline-offset:2px}
   </style>
 </head>
 <body>
-  <header><div><h1>Max Fitness Today</h1><p id="calendar-label">The workout for today in Eastern time</p></div></header>
-  <main>
-    <div class="controls">
-      <label>Date<input type="date" id="date"></label>
-      <label>Program week<select id="week" aria-describedby="progression"></select></label>
-      <label>Strength location<select id="location"><option value="home">Home</option><option value="gym">Gym</option></select></label>
+  <div class="wrap">
+    <header>
+      <div class="kicker" id="kicker">Loading</div>
+      <h1 id="title">Max Fitness Today</h1>
+      <p class="sub" id="sub"></p>
+    </header>
+    <nav class="days" id="days" aria-label="Days this week"></nav>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Where you train">
+        <button type="button" id="loc-home" aria-pressed="true">Home</button>
+        <button type="button" id="loc-gym" aria-pressed="false">Gym</button>
+      </div>
+      <input type="date" id="date" aria-label="Pick a date" class="mini">
     </div>
-    <p id="progression">The card starts at Week 1. Select a later week when you have cleared the progression gate in your private program.</p>
-    <article id="card" aria-live="polite"><p>Loading the program.</p></article>
-    <footer><a href="./program.json">Download the full program data</a></footer>
-    <noscript><p>Use the program data to read today’s Eastern weekday and your chosen program week.</p></noscript>
-  </main>
-  <script type="module" src="./card.mjs"></script>
+    <div class="phase" id="phase"></div>
+    <main id="main" aria-live="polite"><section><p>Loading today's workout.</p></section></main>
+    <footer>
+      <p>General fitness programming, not medical advice. Stop for chest pain, faintness, unusual breathlessness or sharp pain.</p>
+      <p id="version"></p>
+    </footer>
+  </div>
+  <button type="button" class="timer" id="timer" aria-live="polite">Rest</button>
+  <noscript><p>Today's line is in the brief folder: brief/YYYY-MM-DD.txt</p></noscript>
+  <script type="module" src="./app.mjs"></script>
 </body>
 </html>
