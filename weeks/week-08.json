@@ -65,7 +65,7 @@
      "name": "Patrick step",
      "dose": "1 × 10 per side",
      "cue": "Stand on a low step, slowly lower the other heel to the floor by bending the standing knee forward over the toes.",
-     "home": "Bottom stair or a sturdy book stack.",
+     "home": "Floor version: stand on one foot, slowly bend that knee forward over the toes while the other heel lightly touches the floor in front.",
      "gym": "Aerobic step or a low plate stack.",
      "source": "Knees Over Toes",
      "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+Patrick+step"
@@ -256,7 +256,7 @@
      "name": "Patrick step",
      "dose": "1 × 10 per side",
      "cue": "Stand on a low step, slowly lower the other heel to the floor by bending the standing knee forward over the toes.",
-     "home": "Bottom stair or a sturdy book stack.",
+     "home": "Floor version: stand on one foot, slowly bend that knee forward over the toes while the other heel lightly touches the floor in front.",
      "gym": "Aerobic step or a low plate stack.",
      "source": "Knees Over Toes",
      "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+Patrick+step"
@@ -315,15 +315,15 @@
      "demo": "https://www.youtube.com/results?search_query=Jeff+Nippard+barbell+row"
     },
     {
-     "name": "Nordic curl",
+     "name": "Knee strength",
      "sets": 2,
-     "reps": "3–5 slow lowerings",
+     "reps": "6–10",
      "rest": 90,
-     "cue": "Kneel on a cushion with your heels anchored, lower your body forward as slowly as you can, catch yourself with your hands, push back up.",
-     "home": "Heels hooked under the bed frame or a heavy couch. No safe anchor: single-leg glute bridge, 3 × 10 per side.",
-     "gym": "Nordic bench, or lying leg curl for 8–12.",
+     "cue": "Kneel on a folded towel, body straight from knees to head, lean back slowly only as far as you control, then come back up.",
+     "home": "Reverse Nordic on the floor, then 1 set of single-leg glute bridges, 10 per side.",
+     "gym": "Nordic curl on a Nordic bench, or lying leg curl for 8–12.",
      "source": "Knees Over Toes",
-     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+nordic+curl+progression"
+     "demo": "https://www.youtube.com/results?search_query=Knees+Over+Toes+Guy+reverse+nordic"
     },
     {
      "name": "Curl and triceps",
@@ -433,10 +433,12 @@
     "Deep squat hold, 1 min",
     "Thoracic rotations, 8 per side",
     "Dead hang, 30 sec",
+    "McGill Big 3: curl-up, bird dog, side plank, 3 rounds of short holds",
+    "Slow hip and shoulder circles (CARs), 3 per side",
     "Then a 20–30 min walk outside, ideally in early sunlight."
    ],
    "why": "Moving every joint through its full range keeps it that way. Morning light helps sleep and energy.",
-   "source": "JR Stretch · CaliMove · Movement by David · Huberman",
+   "source": "JR Stretch · CaliMove · Movement by David · McGill · Huberman",
    "swap": false,
    "optional": {
     "title": "Optional Lift C (Saturday, 30 min)",
@@ -466,10 +468,12 @@
     "Deep squat hold, 1 min",
     "Thoracic rotations, 8 per side",
     "Dead hang, 30 sec",
+    "McGill Big 3: curl-up, bird dog, side plank, 3 rounds of short holds",
+    "Slow hip and shoulder circles (CARs), 3 per side",
     "Then a 20–30 min walk outside, ideally in early sunlight."
    ],
    "why": "Moving every joint through its full range keeps it that way. Morning light helps sleep and energy.",
-   "source": "JR Stretch · CaliMove · Movement by David · Huberman",
+   "source": "JR Stretch · CaliMove · Movement by David · McGill · Huberman",
    "swap": false,
    "date": "2027-01-10",
    "weekday": "Sunday",
@@ -501,6 +505,7 @@
  ],
  "rules": [
   "Missed a lifting day? Do it the next day and push the rest of the week along. Never two lifting days back to back, never two workouts in one day.",
-  "Rain or lightning at ride time: do the kettlebell circuit instead."
+  "Rain or lightning at ride time: do the kettlebell circuit instead.",
+  "This week's riding: about 163 min. Guidelines ask for at least 150 min of moderate activity a week; walks add to it."
  ]
 }
