@@ -1,8 +1,227 @@
 {
- "version": "v4.1 (Nov 16 2026): videos, how-to, longevity, new cool-downs. Refined after the knowledge base is built.",
+ "version": "v4.2 (Nov 16 2026): new design, longevity core and daily stretch. Refined after the knowledge base is built.",
  "timeZone": "America/New_York",
  "startDate": "2026-11-16",
  "weeks": 12,
+ "core": [
+  {
+   "name": "Morning sunlight",
+   "dose": "5–10 min outside within an hour of waking; 15–20 if cloudy",
+   "who": "Huberman · Peter Attia · Matthew Walker",
+   "built": "Ride days: done by riding outside. Lift days: the cool-down walk is outside.",
+   "why": "Light in the eyes early sets the body clock, which drives sleep quality, morning alertness and evening melatonin."
+  },
+  {
+   "name": "Sleep 7–9 hours, same wake time",
+   "dose": "Dark, cool room; last caffeine 8–10 h before bed; no alcohol close to bed",
+   "who": "Huberman · Peter Attia · Matthew Walker · ACSM",
+   "built": "Your 6:00 wake-up is already fixed. Your watch tracks the rest.",
+   "why": "Sleep is when muscle repairs and memory consolidates; short sleep raises the risk of nearly every chronic disease."
+  },
+  {
+   "name": "Easy cardio (Zone 2), 150+ min a week",
+   "dose": "Talking pace, most of your cardio",
+   "who": "Peter Attia · Huberman · WHO and ACSM guidelines",
+   "built": "Monday and Wednesday rides, plus walks.",
+   "why": "Most endurance training in successful programs is easy (about 80%), with a small hard dose (Seiler's polarized-training research)."
+  },
+  {
+   "name": "One hard cardio session a week",
+   "dose": "Intervals like the Norwegian 4×4",
+   "who": "Peter Attia · Huberman · Helgerud et al.",
+   "built": "Friday 4×4.",
+   "why": "Cardio fitness was one of the strongest predictors of long life in 120,000 treadmill tests (Mandsager et al., JAMA Netw Open, 2018)."
+  },
+  {
+   "name": "Strength training 2+ days a week",
+   "dose": "All major muscles, near failure, getting heavier over time",
+   "who": "Peter Attia · Jeff Nippard · ATHLEAN-X · ACSM",
+   "built": "Lift A Tuesday, Lift B Thursday, optional Lift C Saturday.",
+   "why": "Muscle and strength protect blood sugar, bones and independence; strength falls fastest after 50 unless trained."
+  },
+  {
+   "name": "Enough protein",
+   "dose": "About 1.6 g per kg of body weight a day, spread over meals",
+   "who": "Peter Attia · Huberman · Jeff Nippard",
+   "built": "Protein with breakfast after training.",
+   "why": "Protein above about 1.6 g per kg of body weight a day adds little more muscle (Morton et al., BJSM, 2018)."
+  },
+  {
+   "name": "Move all day",
+   "dose": "7,000–8,000 steps; a 10-min walk after the biggest meal",
+   "who": "Peter Attia · Huberman · Paluch 2022",
+   "built": "Not yet tracked. Duet can add steps from your watch later.",
+   "why": "Health benefits of daily steps level off around 7,000–8,000 (Paluch et al., Lancet Public Health, 2022)."
+  },
+  {
+   "name": "Balance and stability",
+   "dose": "1–2 min a day on one leg; get up off the floor without hands",
+   "who": "Peter Attia · Knees Over Toes · Movement by David",
+   "built": "In every lift-day cool-down and the daily stretch.",
+   "why": "Not being able to stand 10 seconds on one leg in mid-life was linked to higher death risk (Araújo et al., BJSM, 2022). The sit-to-rise test (getting up off the floor) tracked with survival (Brito et al., Eur J Prev Cardiol, 2012)."
+  },
+  {
+   "name": "Grip and carries",
+   "dose": "Dead hang toward 2 min total; heavy carries",
+   "who": "Peter Attia · ATHLEAN-X",
+   "built": "Farmer and suitcase carries; hangs in the warm-up and cool-down.",
+   "why": "Low grip strength predicted earlier death across 17 countries (Leong et al., Lancet, 2015)."
+  },
+  {
+   "name": "Daily mobility",
+   "dose": "10 min: hips, hamstrings, ankles, upper back, shoulders",
+   "who": "Knees Over Toes · JR Stretch · Movement by David · CaliMove",
+   "built": "The daily longevity stretch below.",
+   "why": "Range of motion is use-it-or-lose-it. All four movement coaches agree on the same short list: hips, ankles, hamstrings, upper back and shoulders."
+  },
+  {
+   "name": "Calm the stress response",
+   "dose": "1–5 min of physiological sighs, or a short meditation",
+   "who": "Huberman · Peter Attia",
+   "built": "Every cool-down ends with sighs; a meditation link each day.",
+   "why": "5 min a day of cyclic sighing improved mood more than mindfulness meditation in a month-long trial (Balban et al., Cell Rep Med, 2023)."
+  },
+  {
+   "name": "Little or no alcohol, no smoking",
+   "dose": "The less the better",
+   "who": "Peter Attia · Huberman · WHO",
+   "built": "Habit, not in the workout.",
+   "why": "Both are among the clearest, best-documented drags on healthy lifespan and on sleep."
+  },
+  {
+   "name": "Yearly check-up and blood work",
+   "dose": "Once a year",
+   "who": "Peter Attia",
+   "built": "Habit; results stay private.",
+   "why": "Blood pressure, cholesterol (including ApoB), blood sugar (A1c) and vitamin D catch problems early and guide supplements."
+  }
+ ],
+ "stretch": [
+  {
+   "name": "Couch stretch",
+   "dose": "45 sec per side",
+   "cue": "Back knee on a cushion against the couch, squeeze that glute, stay tall. Opens the hip flexors that sitting shortens.",
+   "home": "Against the couch or a wall.",
+   "gym": "Against a bench.",
+   "source": "Knees Over Toes · JR Stretch",
+   "demo": "https://www.youtube.com/results?search_query=Couch+stretch+Knees+Over+Toes",
+   "video": {
+    "yt": "dWOgSebEAAM",
+    "t": 172,
+    "title": "Couch hip-flexor stretch",
+    "by": "JR Stretch"
+   }
+  },
+  {
+   "name": "Hamstring rocks",
+   "dose": "8 per side",
+   "cue": "Soft knees, hinge at the hips, rock gently into the back of the leg.",
+   "home": "Floor.",
+   "gym": "Floor.",
+   "source": "JR Stretch",
+   "demo": "https://www.youtube.com/results?search_query=Hamstring+rocks+JR+Stretch",
+   "video": {
+    "yt": "dWOgSebEAAM",
+    "t": 99,
+    "title": "Hinged hamstring rocks",
+    "by": "JR Stretch"
+   }
+  },
+  {
+   "name": "90/90 hip switches",
+   "dose": "8 per side",
+   "cue": "Both knees at 90°, rotate side to side, stay tall.",
+   "home": "Floor.",
+   "gym": "Floor.",
+   "source": "JR Stretch",
+   "demo": "https://www.youtube.com/results?search_query=90%2F90+hip+switches+JR+Stretch",
+   "video": {
+    "yt": "fdBakoYR0GU",
+    "t": 203,
+    "title": "90/90 hip switches",
+    "by": "JR Stretch"
+   }
+  },
+  {
+   "name": "Knee-to-wall ankle stretch",
+   "dose": "45 sec per side",
+   "cue": "Foot a hand's width from the wall, drive the knee toward the wall, heel down.",
+   "home": "Against any wall.",
+   "gym": "Against any wall.",
+   "source": "Knees Over Toes",
+   "demo": "https://www.youtube.com/results?search_query=Knee-to-wall+ankle+stretch+Knees+Over+Toes"
+  },
+  {
+   "name": "Deep squat hold",
+   "dose": "1 min",
+   "cue": "Sink into the bottom of a squat, heels down if you can; hold the chair for support.",
+   "home": "Floor, chair for support.",
+   "gym": "Floor.",
+   "source": "JR Stretch · CaliMove",
+   "demo": "https://www.youtube.com/results?search_query=Deep+squat+hold+JR+Stretch",
+   "video": {
+    "yt": "dWOgSebEAAM",
+    "t": 225,
+    "title": "Deep-squat rocks",
+    "by": "JR Stretch"
+   }
+  },
+  {
+   "name": "Open book",
+   "dose": "6 per side",
+   "cue": "Side-lying, open the top arm across, follow it with your eyes.",
+   "home": "Floor.",
+   "gym": "Floor.",
+   "source": "JR Stretch",
+   "demo": "https://www.youtube.com/results?search_query=Open+book+JR+Stretch",
+   "video": {
+    "yt": "fdBakoYR0GU",
+    "t": 146,
+    "title": "Side-lying open book",
+    "by": "JR Stretch"
+   }
+  },
+  {
+   "name": "Chest opener",
+   "dose": "45 sec",
+   "cue": "Hold a broomstick or belt behind your shoulders and open the chest in an easy range.",
+   "home": "Broomstick or belt.",
+   "gym": "Bar or band.",
+   "source": "Movement by David",
+   "demo": "https://www.youtube.com/results?search_query=Chest+opener+Movement+by+David",
+   "video": {
+    "yt": "QaKuVOhikaY",
+    "t": 334,
+    "title": "Chest stretch with broomstick or belt",
+    "by": "Movement by David"
+   }
+  },
+  {
+   "name": "Dead hang or lat sink",
+   "dose": "30–60 sec",
+   "cue": "Relaxed hang from the bar. No bar: on all fours, sink your hips back with arms long.",
+   "home": "Pull-up bar, or the floor.",
+   "gym": "Pull-up bar.",
+   "source": "Movement by David",
+   "demo": "https://www.youtube.com/results?search_query=Dead+hang+or+lat+sink+Movement+by+David",
+   "video": {
+    "yt": "eQHmKJh20_c",
+    "t": 403,
+    "title": "All-fours lat stretch",
+    "by": "Movement by David"
+   }
+  },
+  {
+   "name": "Single-leg stand",
+   "dose": "30 sec per side",
+   "cue": "Tall on one foot; close your eyes when it's easy.",
+   "home": "Floor.",
+   "gym": "Floor.",
+   "source": "Peter Attia",
+   "demo": "https://www.youtube.com/results?search_query=Single-leg+stand+Peter+Attia",
+   "why": "Not being able to stand 10 seconds on one leg in mid-life was linked to higher death risk (Araújo et al., BJSM, 2022)."
+  }
+ ],
  "phases": {
   "1": "Learn the moves",
   "2": "Learn the moves",

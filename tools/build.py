@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 START = dt.date(2026, 11, 16)  # Monday, week 1 day 1
 WEEKS = 12
 PAGE = "https://makingperfectmoves-oss.github.io/max-fitness-today/"
-VERSION = "v4.1 (Nov 16 2026): videos, how-to, longevity, new cool-downs. Refined after the knowledge base is built."
+VERSION = "v4.2 (Nov 16 2026): new design, longevity core and daily stretch. Refined after the knowledge base is built."
 
 
 def search(q):
@@ -487,6 +487,72 @@ LONGEVITY = {
 }
 
 
+# ---------- The longevity core: what the experts agree on ----------
+# Each point is shared by most of Max's sources and backed by research. "built" says how this program covers it.
+CORE = [
+    {"name": "Morning sunlight", "dose": "5–10 min outside within an hour of waking; 15–20 if cloudy",
+     "who": "Huberman · Peter Attia · Matthew Walker", "built": "Ride days: done by riding outside. Lift days: the cool-down walk is outside.",
+     "why": "Light in the eyes early sets the body clock, which drives sleep quality, morning alertness and evening melatonin."},
+    {"name": "Sleep 7–9 hours, same wake time", "dose": "Dark, cool room; last caffeine 8–10 h before bed; no alcohol close to bed",
+     "who": "Huberman · Peter Attia · Matthew Walker · ACSM", "built": "Your 6:00 wake-up is already fixed. Your watch tracks the rest.",
+     "why": "Sleep is when muscle repairs and memory consolidates; short sleep raises the risk of nearly every chronic disease."},
+    {"name": "Easy cardio (Zone 2), 150+ min a week", "dose": "Talking pace, most of your cardio",
+     "who": "Peter Attia · Huberman · WHO and ACSM guidelines", "built": "Monday and Wednesday rides, plus walks.",
+     "why": EV["zone2"]["text"]},
+    {"name": "One hard cardio session a week", "dose": "Intervals like the Norwegian 4×4",
+     "who": "Peter Attia · Huberman · Helgerud et al.", "built": "Friday 4×4.",
+     "why": EV["vo2"]["text"]},
+    {"name": "Strength training 2+ days a week", "dose": "All major muscles, near failure, getting heavier over time",
+     "who": "Peter Attia · Jeff Nippard · ATHLEAN-X · ACSM", "built": "Lift A Tuesday, Lift B Thursday, optional Lift C Saturday.",
+     "why": "Muscle and strength protect blood sugar, bones and independence; strength falls fastest after 50 unless trained."},
+    {"name": "Enough protein", "dose": "About 1.6 g per kg of body weight a day, spread over meals",
+     "who": "Peter Attia · Huberman · Jeff Nippard", "built": "Protein with breakfast after training.",
+     "why": EV["protein"]["text"]},
+    {"name": "Move all day", "dose": "7,000–8,000 steps; a 10-min walk after the biggest meal",
+     "who": "Peter Attia · Huberman · Paluch 2022", "built": "Not yet tracked. Duet can add steps from your watch later.",
+     "why": EV["steps"]["text"]},
+    {"name": "Balance and stability", "dose": "1–2 min a day on one leg; get up off the floor without hands",
+     "who": "Peter Attia · Knees Over Toes · Movement by David", "built": "In every lift-day cool-down and the daily stretch.",
+     "why": EV["balance"]["text"] + " " + EV["sitrise"]["text"]},
+    {"name": "Grip and carries", "dose": "Dead hang toward 2 min total; heavy carries",
+     "who": "Peter Attia · ATHLEAN-X", "built": "Farmer and suitcase carries; hangs in the warm-up and cool-down.",
+     "why": EV["grip"]["text"]},
+    {"name": "Daily mobility", "dose": "10 min: hips, hamstrings, ankles, upper back, shoulders",
+     "who": "Knees Over Toes · JR Stretch · Movement by David · CaliMove", "built": "The daily longevity stretch below.",
+     "why": "Range of motion is use-it-or-lose-it. All four movement coaches agree on the same short list: hips, ankles, hamstrings, upper back and shoulders."},
+    {"name": "Calm the stress response", "dose": "1–5 min of physiological sighs, or a short meditation",
+     "who": "Huberman · Peter Attia", "built": "Every cool-down ends with sighs; a meditation link each day.",
+     "why": EV["sigh"]["text"]},
+    {"name": "Little or no alcohol, no smoking", "dose": "The less the better",
+     "who": "Peter Attia · Huberman · WHO", "built": "Habit, not in the workout.",
+     "why": "Both are among the clearest, best-documented drags on healthy lifespan and on sleep."},
+    {"name": "Yearly check-up and blood work", "dose": "Once a year",
+     "who": "Peter Attia", "built": "Habit; results stay private.",
+     "why": "Blood pressure, cholesterol (including ApoB), blood sugar (A1c) and vitamin D catch problems early and guide supplements."},
+]
+
+# ---------- Daily longevity stretch (10 min, any time) ----------
+STRETCH = [
+    move("Couch stretch", "45 sec per side", "Back knee on a cushion against the couch, squeeze that glute, stay tall. Opens the hip flexors that sitting shortens.",
+         "Against the couch or a wall.", "Against a bench.", "Knees Over Toes · JR Stretch", yt("dWOgSebEAAM", 172, "Couch hip-flexor stretch", "JR Stretch")),
+    move("Hamstring rocks", "8 per side", "Soft knees, hinge at the hips, rock gently into the back of the leg.",
+         "Floor.", "Floor.", "JR Stretch", yt("dWOgSebEAAM", 99, "Hinged hamstring rocks", "JR Stretch")),
+    move("90/90 hip switches", "8 per side", "Both knees at 90°, rotate side to side, stay tall.",
+         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 203, "90/90 hip switches", "JR Stretch")),
+    move("Knee-to-wall ankle stretch", "45 sec per side", "Foot a hand's width from the wall, drive the knee toward the wall, heel down.",
+         "Against any wall.", "Against any wall.", "Knees Over Toes"),
+    move("Deep squat hold", "1 min", "Sink into the bottom of a squat, heels down if you can; hold the chair for support.",
+         "Floor, chair for support.", "Floor.", "JR Stretch · CaliMove", yt("dWOgSebEAAM", 225, "Deep-squat rocks", "JR Stretch")),
+    move("Open book", "6 per side", "Side-lying, open the top arm across, follow it with your eyes.",
+         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch")),
+    move("Chest opener", "45 sec", "Hold a broomstick or belt behind your shoulders and open the chest in an easy range.",
+         "Broomstick or belt.", "Bar or band.", "Movement by David", yt("QaKuVOhikaY", 334, "Chest stretch with broomstick or belt", "Movement by David")),
+    move("Dead hang or lat sink", "30–60 sec", "Relaxed hang from the bar. No bar: on all fours, sink your hips back with arms long.",
+         "Pull-up bar, or the floor.", "Pull-up bar.", "Movement by David", yt("eQHmKJh20_c", 403, "All-fours lat stretch", "Movement by David")),
+    move("Single-leg stand", "30 sec per side", "Tall on one foot; close your eyes when it's easy.",
+         "Floor.", "Floor.", "Peter Attia", why=EV["balance"]["text"]),
+]
+
 def build_week(w):
     phase_id, phase_name, rule = PHASES[w]
     deload = phase_id == "deload"
@@ -567,6 +633,7 @@ def main():
     with open(os.path.join(ROOT, "brief.json"), "w") as f:
         json.dump(lines, f, ensure_ascii=False, indent=1)
     meta = {"version": VERSION, "timeZone": "America/New_York", "startDate": START.isoformat(), "weeks": WEEKS,
+            "core": CORE, "stretch": STRETCH,
             "phases": {str(k): v[1] for k, v in PHASES.items()},
             "afterLastWeek": "Repeats weeks 7–12 until the next block is published."}
     with open(os.path.join(ROOT, "program.json"), "w") as f:
