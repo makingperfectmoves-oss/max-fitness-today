@@ -49,7 +49,7 @@ WARMUP = [
      "home": "Bodyweight, holding a door frame or the pull-up bar.", "gym": "Bodyweight, hold a rack for balance.",
      "source": "Knees Over Toes", "demo": demo("Knees Over Toes Guy ATG split squat")},
     {"name": "Patrick step", "dose": "1 × 10 per side", "cue": "Stand on a low step, slowly lower the other heel to the floor by bending the standing knee forward over the toes.",
-     "home": "Bottom stair or a sturdy book stack.", "gym": "Aerobic step or a low plate stack.",
+     "home": "Floor version: stand on one foot, slowly bend that knee forward over the toes while the other heel lightly touches the floor in front.", "gym": "Aerobic step or a low plate stack.",
      "source": "Knees Over Toes", "demo": demo("Knees Over Toes Guy Patrick step")},
     {"name": "Couch stretch", "dose": "45 sec per side", "cue": "Back knee on a cushion against the wall or couch, squeeze the glute, stay tall.",
      "home": "Against the couch or a wall.", "gym": "Against a bench.",
@@ -110,9 +110,9 @@ def lift_b(deload):
         lift("Row", s, "8–10", 90, "Flat back, pull the elbows toward your hips, pause, lower slowly.",
              "Bent-over barbell row, or one-arm dumbbell row with a hand on the chair.", "Chest-supported row or cable row.",
              "Jeff Nippard · ATHLEAN-X", "Jeff Nippard barbell row"),
-        lift("Nordic curl", 2, "3–5 slow lowerings", 90, "Kneel on a cushion with your heels anchored, lower your body forward as slowly as you can, catch yourself with your hands, push back up.",
-             "Heels hooked under the bed frame or a heavy couch. No safe anchor: single-leg glute bridge, 3 × 10 per side.", "Nordic bench, or lying leg curl for 8–12.",
-             "Knees Over Toes", "Knees Over Toes Guy nordic curl progression"),
+        lift("Knee strength", 2, "6–10", 90, "Kneel on a folded towel, body straight from knees to head, lean back slowly only as far as you control, then come back up.",
+             "Reverse Nordic on the floor, then 1 set of single-leg glute bridges, 10 per side.", "Nordic curl on a Nordic bench, or lying leg curl for 8–12.",
+             "Knees Over Toes", "Knees Over Toes Guy reverse nordic"),
         lift("Curl and triceps", 2, "10–12 each", 60, "Do one set of curls, then one set of overhead triceps extensions, then rest.",
              "Dumbbell curls, then an overhead dumbbell extension.", "Cable or dumbbell curls, then cable overhead extension.",
              "Jeff Nippard", "Jeff Nippard arms dumbbell"),
@@ -154,15 +154,18 @@ def easy_ride(w, day):
 def four_by_four(w):
     deload = w in (6, 12)
     rounds = 3 if deload else 4
+    hard = 2 if w <= 2 else 3 if w <= 5 else 4
+    easy = 2 if w <= 2 else 3
     effort = "7–8 out of 10" if w <= 2 else "8–9 out of 10"
+    title = "Norwegian 4×4" if hard == 4 else f"4×4 build-up ({rounds}×{hard} min)"
     return {
-        "kind": "intervals", "title": "Norwegian 4×4", "minutes": 10 + rounds * 7 + 5,
-        "summary": f"{rounds} rounds of 4 min hard, 3 min easy.",
+        "kind": "intervals", "title": title, "minutes": 10 + rounds * (hard + easy) + 5,
+        "summary": f"{rounds} rounds of {hard} min hard, {easy} min easy.",
         "how": [
             "10 min warm-up, building from easy to moderate.",
-            f"{rounds} rounds: 4 min hard at {effort} (only a few words at a time), then 3 min easy spinning.",
+            f"{rounds} rounds: {hard} min hard at {effort} (only a few words at a time), then {easy} min easy spinning.",
             "5–10 min easy cool-down.",
-        ] + (["Weeks 1–2: learn the pace. Finish each round feeling you could have done one more."] if w <= 2 else []),
+        ] + (["The hard rounds grow from 2 to 3 to 4 minutes over the first weeks, so you earn the full 4×4 by week 7."] if hard < 4 else []),
         "why": "Once a week, this is the best-studied way to raise heart fitness (VO2 max), one of the strongest markers of long life.",
         "source": "Norwegian 4×4 (Helgerud et al.)",
         "safety": "Pick a quiet stretch of road with no stop lights for the hard rounds. Lights on in the dark.",
@@ -195,10 +198,12 @@ REST = {
         "Deep squat hold, 1 min",
         "Thoracic rotations, 8 per side",
         "Dead hang, 30 sec",
+        "McGill Big 3: curl-up, bird dog, side plank, 3 rounds of short holds",
+        "Slow hip and shoulder circles (CARs), 3 per side",
         "Then a 20–30 min walk outside, ideally in early sunlight.",
     ],
     "why": "Moving every joint through its full range keeps it that way. Morning light helps sleep and energy.",
-    "source": "JR Stretch · CaliMove · Movement by David · Huberman",
+    "source": "JR Stretch · CaliMove · Movement by David · McGill · Huberman",
     "swap": False,
 }
 
@@ -256,8 +261,10 @@ def build_week(w):
         d["mental"] = dict(m, dose="3–5 min, after the workout or any time today")
     if w == 1:
         days["Tuesday"]["baseline"] = "Week 1 baseline: write down your weights for each lift, and at the end do one set of max pull-ups and one max dead hang. Tell Duet the numbers."
+    cardio = sum(d["minutes"] for d in days.values() if d["kind"] in ("ride", "intervals"))
+    rules = RULES + [f"This week's riding: about {cardio} min. Guidelines ask for at least 150 min of moderate activity a week; walks add to it."]
     return {"week": w, "phase": {"id": phase_id, "name": phase_name, "rule": rule},
-            "days": days, "swap": SWAP, "daily": DAILY, "rules": RULES}
+            "days": days, "swap": SWAP, "daily": DAILY, "rules": rules}
 
 
 def brief_line(w, d):
