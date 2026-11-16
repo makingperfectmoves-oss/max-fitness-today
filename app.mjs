@@ -25,6 +25,7 @@ const toUTC = s => new Date(s + 'T12:00:00Z');
 const addDays = (s, n) => new Date(toUTC(s).getTime() + n * 864e5).toISOString().slice(0, 10);
 const shortDate = s => toUTC(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const mmss = t => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+const hm = m => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 
 export function weekFor(date, start, weeks) {
   const days = Math.floor((toUTC(date) - toUTC(start)) / 864e5);
@@ -34,7 +35,7 @@ export function weekFor(date, start, weeks) {
   return { real, file, dayIndex, before: days < 0 };
 }
 
-let meta, loc = store.get('loc', 'home'), timerId, current;
+let meta, loc = store.get('loc', 'home'), view = 'today', timerId, current, currentWeek, currentDay;
 const cache = {};
 
 async function loadWeek(n) {
@@ -59,48 +60,46 @@ function startTimer(seconds) {
   }, 1000);
 }
 
-/* ---------- Videos: thumbnail first, the player loads only on tap ---------- */
+/* ---------- Video: thumbnail first, player only on tap ---------- */
 const ytWatch = v => `https://www.youtube.com/watch?v=${v.yt}${v.t ? `&t=${v.t}s` : ''}`;
-function player(v) {
-  return el('iframe', { class: 'frame', src: `https://www.youtube-nocookie.com/embed/${v.yt}?start=${v.t || 0}&autoplay=1&rel=0&playsinline=1`,
-    title: v.title, allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: '' });
-}
+const player = v => el('iframe', { class: 'frame', src: `https://www.youtube-nocookie.com/embed/${v.yt}?start=${v.t || 0}&autoplay=1&rel=0&playsinline=1`,
+  title: v.title, allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: '' });
 function media(v) {
   if (!v) return null;
-  if (!v.yt) return el('a', { class: 'guide', href: v.url, target: '_blank', rel: 'noopener' },
-    el('div', {}, el('b', {}, v.title), el('span', {}, `${v.by} · step-by-step guide ↗`)));
-  const box = el('div', {});
+  if (!v.yt) return el('a', { class: 'guide', href: v.url, target: '_blank', rel: 'noopener' }, el('i', {}, 'Aa'),
+    el('div', {}, el('b', {}, v.title), el('span', {}, `${v.by} · step-by-step guide`)));
   const img = el('img', { src: `https://i.ytimg.com/vi/${v.yt}/mqdefault.jpg`, alt: '', loading: 'lazy' });
   img.addEventListener('error', () => img.remove());
-  const btn = el('button', { type: 'button', class: 'video', 'aria-label': `Play video: ${v.title}` }, img, el('span', { class: 'play' }),
-    el('span', { class: 'cap' }, el('b', {}, v.title), [v.by, v.t ? `starts at ${mmss(v.t)}` : 'from the start'].filter(Boolean).join(' · ')));
+  const btn = el('button', { type: 'button', class: 'video', 'aria-label': `Play video: ${v.title}` }, img, el('span', { class: 'pl' }),
+    el('span', { class: 'cap' }, el('b', {}, v.title), [v.by, v.t ? `jumps to ${mmss(v.t)}` : ''].filter(Boolean).join(' · ')));
   btn.addEventListener('click', () => btn.replaceWith(player(v)));
-  box.append(btn, el('div', { class: 'vlinks' }, el('span', {}), el('a', { href: ytWatch(v), target: '_blank', rel: 'noopener' }, 'Open in YouTube ↗')));
-  return box;
+  return el('div', {}, btn, el('div', { class: 'vlink' }, el('a', { href: ytWatch(v), target: '_blank', rel: 'noopener' }, 'Open in YouTube')));
 }
 function miniMedia(v) {
   if (!v) return null;
-  if (!v.yt) return el('a', { class: 'mini-vid', href: v.url, target: '_blank', rel: 'noopener', style: 'display:inline-block;text-decoration:none' }, `📖 ${v.by} guide`);
-  const wrap = el('div', {});
-  const b = el('button', { type: 'button', class: 'mini-vid' }, `▶ Watch${v.t ? ` (from ${mmss(v.t)})` : ''}${v.by ? ` · ${v.by}` : ''}`);
-  b.addEventListener('click', () => { b.replaceWith(player(v), el('div', { class: 'vlinks' }, el('span', {}, v.title), el('a', { href: ytWatch(v), target: '_blank', rel: 'noopener' }, 'YouTube ↗'))); });
-  wrap.append(b);
-  return wrap;
+  if (!v.yt) return el('a', { class: 'chipbtn', href: v.url, target: '_blank', rel: 'noopener' }, `${v.by} guide`);
+  const b = el('button', { type: 'button', class: 'chipbtn' }, `Watch${v.t ? ` from ${mmss(v.t)}` : ''}${v.by ? ` · ${v.by}` : ''}`);
+  b.addEventListener('click', () => b.replaceWith(player(v)));
+  return b;
 }
-const evidence = list => (list || []).map(e => el('p', { class: 'ev' }, e.text, e.url ? [' ', el('a', { href: e.url, target: '_blank', rel: 'noopener' }, 'Source ↗')] : null));
+const evidence = list => (list || []).map(e => el('p', { class: 'ev' }, e.text, e.url ? [' ', el('a', { href: e.url, target: '_blank', rel: 'noopener' }, 'Source')] : null));
 
 /* ---------- Progress ---------- */
 function updateProgress() {
-  const all = document.querySelectorAll('#main .set, #main .tick');
-  const on = [...all].filter(b => b.getAttribute('aria-pressed') === 'true').length;
-  const bar = document.querySelector('.bar span');
-  if (bar) bar.style.width = all.length ? `${Math.round(on / all.length * 100)}%` : '0';
-  const lbl = document.querySelector('.barlbl');
-  if (lbl) lbl.textContent = on ? `${on} of ${all.length} steps done` : `${all.length} steps · tick them off as you go`;
+  const all = [...document.querySelectorAll('#main [data-step]')];
+  const on = all.filter(b => b.getAttribute('aria-pressed') === 'true').length;
+  const pct = all.length ? Math.round(on / all.length * 100) : 0;
+  document.querySelector('#ring .fg').style.strokeDashoffset = String(213.6 * (1 - pct / 100));
+  $('pct').textContent = `${pct}%`;
+  document.querySelectorAll('#main .node').forEach(n => {
+    const s = [...n.querySelectorAll('[data-step]')];
+    n.classList.toggle('done', s.length > 0 && s.every(b => b.getAttribute('aria-pressed') === 'true'));
+    const c = n.querySelector('.cnt');
+    if (c && s.length) c.textContent = `${s.filter(b => b.getAttribute('aria-pressed') === 'true').length}/${s.length}`;
+  });
 }
-
-function toggle(key, label, onOn, cls = 'tick', text = '') {
-  const b = el('button', { type: 'button', class: cls, 'aria-pressed': store.get(key, 'false'), 'aria-label': label }, text);
+function toggle(key, label, onOn, cls = 'chk', text = '') {
+  const b = el('button', { type: 'button', class: cls, 'data-step': '', 'aria-pressed': store.get(key, 'false'), 'aria-label': label }, text);
   b.addEventListener('click', () => {
     const on = b.getAttribute('aria-pressed') !== 'true';
     b.setAttribute('aria-pressed', String(on)); store.set(key, String(on));
@@ -110,101 +109,73 @@ function toggle(key, label, onOn, cls = 'tick', text = '') {
   return b;
 }
 
-/* ---------- Pieces ---------- */
-function moveItem(x, key) {
+/* ---------- Building blocks ---------- */
+function node(n, clock, title, kids, open = true) {
+  return el('div', { class: 'node' }, el('span', { class: 'dot', 'aria-hidden': 'true' }, String(n)),
+    clock ? el('div', { class: 'clock' }, clock) : null,
+    el('details', Object.assign({ class: 'block' }, open ? { open: '' } : {}), el('summary', {}, el('h2', {}, title), el('span', { class: 'cnt' })),
+      el('div', { class: 'body' }, kids)));
+}
+function moveRow(x, key) {
   const where = x.home ? (loc === 'gym' ? x.gym : x.home) : '';
-  return el('div', { class: 'item' },
-    toggle(key, `${x.name} done`),
-    el('div', {},
-      el('div', {}, el('span', { class: 'nm' }, x.name), el('span', { class: 'ds' }, ` · ${x.dose}`)),
+  return el('div', { class: 'row' }, toggle(key, `${x.name} done`),
+    el('div', {}, el('div', {}, el('span', { class: 'nm' }, x.name), el('span', { class: 'ds' }, `  ${x.dose}`)),
       el('p', {}, x.cue),
       where && where !== 'Floor.' ? el('p', { class: 'ds' }, where) : null,
-      x.why ? el('p', { class: 'ds' }, x.why) : null,
+      x.why ? el('p', { class: 'why-s' }, x.why) : null,
       miniMedia(x.video)));
 }
 
-function sectionHead(n, title, time) {
-  return el('h3', {}, el('span', { class: 'n' }, String(n)), title, time ? el('span', { class: 't' }, time) : null);
-}
-
-function exercise(ex, i, date) {
+function liftTile(ex, i, date) {
   const gym = loc === 'gym';
-  const label = g => g ? 'Gym' : 'Home';
-  const vidFor = g => (g && ex.gymVideo) ? ex.gymVideo : ex.video;
-  let showingOther = false;
-  const v = el('div', { class: 'variant' });
+  let other = false;
+  const where = el('div', { class: 'where' });
   const vid = el('div', {});
+  const swap = el('button', { type: 'button', class: 'swap' });
   const paint = () => {
-    const g = gym !== showingOther;
-    v.replaceChildren(el('span', { class: 'tag' }, label(g)), g ? ex.gym : ex.home);
-    vid.replaceChildren(media(vidFor(g)));
+    const g = gym !== other;
+    where.replaceChildren(el('span', { class: 'lab' }, g ? 'Gym' : 'Home'), el('span', {}, g ? ex.gym : ex.home));
+    vid.replaceChildren(media(g && ex.gymVideo ? ex.gymVideo : ex.video));
+    swap.textContent = other ? 'Back' : (gym ? 'See the home version' : 'See the gym version');
   };
+  swap.addEventListener('click', () => { other = !other; paint(); });
   paint();
-  const otherBtn = el('button', { type: 'button', class: 'mini' }, gym ? 'Show home version' : 'Show gym version');
-  otherBtn.addEventListener('click', () => {
-    showingOther = !showingOther; paint();
-    otherBtn.textContent = showingOther ? 'Back' : (gym ? 'Show home version' : 'Show gym version');
-  });
   const wkey = `wt:${ex.name}`;
   const wt = el('input', { class: 'wt', type: 'text', inputmode: 'decimal', placeholder: 'Weight', 'aria-label': `${ex.name} weight`, value: store.get(wkey, '') });
   wt.addEventListener('change', () => store.set(wkey, wt.value.trim()));
-  const sets = el('div', { class: 'row' });
+  const sets = el('div', { class: 'sets' });
   for (let s = 1; s <= ex.sets; s++) sets.append(toggle(`set:${date}:${i}:${s}`, `${ex.name} set ${s} done`, () => ex.rest && startTimer(ex.rest), 'set', String(s)));
   sets.append(wt);
-
-  const how = el('details', { class: 'how' }, el('summary', {}, 'How to do it'),
-    el('dl', {},
-      el('dt', {}, 'Set up'), el('dd', {}, ex.setup),
-      el('dt', {}, 'Move'), el('dd', {}, el('ol', { class: 'steps' }, ex.steps.map(s => el('li', {}, s)))),
-      el('dt', {}, 'Avoid'), el('dd', {}, ex.avoid)));
-  const more = el('details', { class: 'how' }, el('summary', {}, 'How to progress · the evidence'),
-    el('dl', {}, el('dt', {}, 'Progress'), el('dd', {}, ex.progress), el('dt', {}, 'Evidence'), el('dd', {}, evidence(ex.evidence)),
-      ex.limits ? [el('dt', {}, 'Limits'), el('dd', {}, ex.limits)] : null),
-    el('p', { class: 'src' }, `Coaching: ${ex.source} · `, el('a', { href: ex.demo, target: '_blank', rel: 'noopener' }, 'more videos ↗')));
-
-  return el('div', { class: 'ex' },
-    el('div', { class: 'ex-head' }, el('span', { class: 'ex-name' }, `${i + 1}. ${ex.name}`), el('span', { class: 'dose' }, `${ex.sets} × ${ex.reps}`)),
-    el('p', { class: 'exmeta' }, `Rest ${ex.rest >= 120 ? ex.rest / 60 + ' min' : ex.rest + ' sec'} · timer starts when you tick a set`),
-    vid, v,
+  return el('div', { class: 'lift' },
+    el('div', { class: 'lh' }, el('span', { class: 'num' }, String(i + 1).padStart(2, '0')), el('h3', {}, ex.name), el('span', { class: 'dose' }, `${ex.sets}×${ex.reps}`)),
+    el('div', { class: 'lmeta' }, `Rest ${ex.rest >= 120 ? ex.rest / 60 + ' min' : ex.rest + ' sec'} · ticking a set starts the timer · ${ex.source}`),
+    vid, where, swap,
     ex.noGear ? el('p', { class: 'nogear' }, ex.noGear) : null,
     el('p', { class: 'why' }, ex.why),
-    how, more,
-    el('div', { class: 'row' }, otherBtn),
-    sets);
+    sets,
+    el('details', { class: 'more' }, el('summary', {}, 'How to do it'),
+      el('dl', {}, el('dt', {}, 'Set up'), el('dd', {}, ex.setup), el('dt', {}, 'Move'), el('dd', {}, el('ol', {}, ex.steps.map(s => el('li', {}, s)))),
+        el('dt', {}, 'Avoid'), el('dd', {}, ex.avoid))),
+    el('details', { class: 'more' }, el('summary', {}, 'Progress and evidence'),
+      el('dl', {}, el('dt', {}, 'Progress'), el('dd', {}, ex.progress), el('dt', {}, 'Evidence'), el('dd', {}, evidence(ex.evidence)),
+        ex.limits ? [el('dt', {}, 'Limits'), el('dd', {}, ex.limits)] : null),
+      el('p', { class: 'src' }, el('a', { href: ex.demo, target: '_blank', rel: 'noopener' }, `More ${ex.source.split(' · ')[0]} videos`))));
 }
 
-function warmup(day, n) {
-  const total = day.warmup.reduce((a, p) => a + p.minutes, 0);
-  return el('section', {}, sectionHead(n, 'Warm-up', `${total} min`),
-    el('p', { class: 'goal' }, 'Raise temperature, armor the joints, rehearse the patterns, ramp the load.'),
-    day.warmup.map((p, pi) => [el('h4', {}, `${p.part} `, el('small', {}, `· ${p.minutes} min · ${p.goal}`)),
-      p.items.map((x, xi) => moveItem(x, `wu:${day.date}:${pi}:${xi}`))]));
+function stretchNode(n, day, open) {
+  return node(n, 'ANY TIME TODAY · 10 MIN', 'Longevity stretch', [
+    el('p', { class: 'lead' }, 'The short list every movement coach agrees on: hips, hamstrings, ankles, upper back, shoulders, balance. Evening works well.'),
+    meta.stretch.map((x, i) => moveRow(x, `st:${day.date}:${i}`))], open);
 }
 
-function cooldown(day, n) {
+function coolNode(n, clock, day) {
   const c = day.cooldown;
-  return el('section', {}, sectionHead(n, 'Cool-down', `${c.minutes} min`),
-    el('p', { class: 'goal' }, c.goal),
-    c.items.map((x, xi) => moveItem(x, `cd:${day.date}:${xi}`)),
-    el('details', {}, el('summary', {}, 'Why a cool-down'), evidence([{ text: 'A cool-down does little for next-day soreness. It does settle the heart rate after hard work, it is the best moment for mobility while the muscles are warm, and the breathing turns a hard session into a calm start to the trading day.' }])));
-}
-
-function longevity(day, week, n) {
-  return el('section', {}, sectionHead(n, 'For a long life, today'),
-    el('p', { class: 'goal' }, 'Small habits from Huberman, Peter Attia and the research behind them. No gear needed.'),
-    day.longevity.map(h => el('div', { class: 'habit' }, el('div', { class: 'nm' }, h.name), el('div', { class: 'ds' }, h.dose),
-      el('details', {}, el('summary', {}, 'Why'), el('p', { class: 'wy' }, h.why), el('p', { class: 'src' }, h.source)))),
-    day.mental ? el('div', { class: 'habit' }, el('div', { class: 'nm' }, 'Mind'),
-      el('div', { class: 'ds' }, el('a', { href: day.mental.url, target: '_blank', rel: 'noopener' }, day.mental.name), ` · ${day.mental.dose}`)) : null,
-    el('details', {}, el('summary', {}, 'Week rules'), el('ul', { class: 'steps' }, (week.rules || []).map(x => el('li', {}, x)))));
+  return node(n, clock, `Cool-down · ${c.minutes} min`, [el('p', { class: 'lead' }, c.goal), c.items.map((x, i) => moveRow(x, `cd:${day.date}:${i}`))]);
 }
 
 function logText(day) {
   const d = `${day.weekday.slice(0, 3)} ${shortDate(day.date)}`;
-  if (day.kind !== 'lift') {
-    const tick = document.querySelectorAll('#main .tick[aria-pressed="true"]').length;
-    return `Done: ${day.title}, ${d}${day.kind === 'rest' ? '' : `, ${day.minutes} min`}.${tick ? ` Cool-down/mobility: ${tick} ticked.` : ''}`;
-  }
+  if (day.kind !== 'lift') return `Done: ${day.title}, ${d}${day.kind === 'rest' ? '' : `, ${day.minutes} min`}.`;
   const parts = day.lifts.map((ex, i) => {
     const done = [...Array(ex.sets)].filter((_, s) => store.get(`set:${day.date}:${i}:${s + 1}`, 'false') === 'true').length;
     const w = store.get(`wt:${ex.name}`, '');
@@ -212,22 +183,18 @@ function logText(day) {
   });
   return `Done: ${day.title} (${loc}), ${d}. ${parts.join('; ')}.`;
 }
-
-function logBox(day, n) {
+function logNode(n, day) {
   const ta = el('textarea', { class: 'log', readonly: '', 'aria-label': 'Text for Duet' });
-  const btn = el('button', { type: 'button', class: 'primary' }, 'Copy for Duet');
+  const btn = el('button', { type: 'button', class: 'btn full' }, 'Copy my summary for Duet');
   btn.addEventListener('click', async () => {
     ta.value = logText(day);
-    try { await navigator.clipboard.writeText(ta.value); btn.textContent = 'Copied · paste it to Duet'; }
+    try { await navigator.clipboard.writeText(ta.value); btn.textContent = 'Copied. Paste it to Duet'; }
     catch { ta.select(); btn.textContent = 'Select and copy the text below'; }
-    setTimeout(() => { btn.textContent = 'Copy for Duet'; }, 4000);
+    setTimeout(() => { btn.textContent = 'Copy my summary for Duet'; }, 4000);
   });
-  return el('section', {}, sectionHead(n, 'Tell Duet'),
-    el('p', { class: 'goal' }, 'Tap to copy a one-line summary of your ticks and weights, then paste it to Duet. Or just say "done", "skip", or your numbers.'),
-    btn, ta);
+  return node(n, 'DONE', 'Tell Duet', [el('p', { class: 'lead' }, 'One tap copies your ticks and weights. Or just say "done", "skip", or your numbers.'), btn, ta]);
 }
 
-/* ---------- Ride weather (weather.gov, US only, no key) ---------- */
 async function weather(box, ask) {
   const saved = store.get('geo', '');
   let lat, lon;
@@ -237,96 +204,110 @@ async function weather(box, ask) {
     try {
       const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 }));
       lat = p.coords.latitude.toFixed(2); lon = p.coords.longitude.toFixed(2); store.set('geo', `${lat},${lon}`);
-    } catch { box.textContent = 'Location was not shared. Check weather.gov or your weather app.'; return; }
+    } catch { box.textContent = 'Location was not shared. Check your weather app.'; return; }
   } else return;
   box.textContent = 'Checking the forecast…';
   try {
     const pt = await (await fetch(`https://api.weather.gov/points/${lat},${lon}`)).json();
     const fc = await (await fetch(pt.properties.forecastHourly)).json();
-    const now = Date.now();
-    const next = fc.properties.periods.filter(p => new Date(p.endTime) > now).slice(0, 3);
+    const next = fc.properties.periods.filter(p => new Date(p.endTime) > Date.now()).slice(0, 3);
     const rain = Math.max(...next.map(p => p.probabilityOfPrecipitation?.value || 0));
     const storm = next.some(p => /thunder|lightning/i.test(p.shortForecast));
-    const verdict = storm ? 'Storms nearby: do the kettlebell circuit.' : rain >= 60 ? 'Rain likely: do the kettlebell circuit.' : rain >= 30 ? 'Some chance of rain: check the radar before you go.' : 'Good to ride.';
+    const verdict = storm ? 'Storms nearby: do the kettlebell circuit.' : rain >= 60 ? 'Rain likely: do the kettlebell circuit.' : rain >= 30 ? 'Some chance of rain: check the radar first.' : 'Good to ride.';
     const p0 = next[0];
     box.replaceChildren(el('b', {}, verdict), `Next 3 hours: ${p0.temperature}°${p0.temperatureUnit}, ${p0.shortForecast.toLowerCase()}, rain up to ${rain}%, wind ${p0.windSpeed}.`);
   } catch { box.textContent = 'The forecast did not load. Check your weather app.'; }
 }
 
-function ridePrep(day, n, isToday) {
-  const box = el('div', { class: 'wx' }, isToday ? 'Tap to check the next 3 hours at your location.' : 'The weather check works on the day itself.');
-  const btn = el('button', { type: 'button', class: 'mini' }, '☁ Check ride weather');
-  btn.addEventListener('click', () => weather(box, true));
-  if (isToday && store.get('geo', '')) weather(box, false);
-  return el('section', {}, sectionHead(n, 'Before you ride', '2 min'),
-    day.prep.map((x, xi) => el('div', { class: 'item' }, toggle(`prep:${day.date}:${xi}`, x), el('div', {}, x))),
-    el('div', { class: 'row' }, btn), box);
+/* ---------- Views ---------- */
+function brief(day, week) {
+  return el('section', { class: 'brief' },
+    el('div', { class: 'tags' }, el('span', { class: 'tag k' }, KIND[day.kind][0]), el('span', { class: 'tag' }, `About ${day.minutes} min`),
+      day.kind === 'lift' ? el('span', { class: 'tag' }, loc === 'gym' ? 'Gym' : 'Home · floor, chair, your weights') : null),
+    el('p', { class: 'disp', style: 'font-size:1.05rem;font-weight:600' }, day.summary),
+    day.why ? el('p', {}, day.why) : null,
+    day.evidence ? el('details', { class: 'more' }, el('summary', {}, 'The evidence'), evidence(day.evidence)) : null,
+    day.safety ? el('div', { class: 'callout' }, day.safety) : null,
+    day.baseline ? el('div', { class: 'callout' }, day.baseline) : null,
+    el('div', { class: 'rule' }, el('b', {}, `This week · ${week.phase.name}. `), week.phase.rule));
 }
 
-function rideMain(day, week, n) {
-  const sec = el('section', {}, sectionHead(n, day.kind === 'intervals' ? 'The intervals' : 'The ride', `${day.minutes} min`),
-    el('ol', { class: 'steps' }, day.how.map(x => el('li', {}, x))));
-  if (day.intervals) {
-    const iv = day.intervals, total = iv.warm + iv.rounds * (iv.hard + iv.easy);
-    const blocks = [{ m: iv.warm, k: '--ride', t: 'Warm-up' }];
-    for (let r = 0; r < iv.rounds; r++) blocks.push({ m: iv.hard, k: '--hiit', t: `Hard ${r + 1}` }, { m: iv.easy, k: '--ride', t: 'Easy' });
-    sec.append(el('div', { style: 'display:flex;gap:2px;margin:12px 0 4px;height:34px;align-items:flex-end' },
-      blocks.map(b => el('div', { title: `${b.t} ${b.m} min`, style: `flex:${b.m};background:var(${b.k});border-radius:4px;height:${b.k === '--hiit' ? 34 : 14}px` }))),
-      el('p', { class: 'src' }, `Shape of the ride: ${total} min of warm-up and rounds, then the easy spin and cool-down. Tall blocks are the hard rounds.`));
-  }
-  sec.append(el('h4', {}, 'How hard is hard?'),
-    el('table', { class: 'effort' }, el('tbody', {}, day.effort.map(e => el('tr', {}, el('td', {}, e.zone), el('td', {}, e.feel, el('br'), el('span', { class: 'src' }, e.use)))))));
-  sec.append(el('details', {}, el('summary', {}, week.swap.title),
-    media(week.swap.video),
-    el('ol', { class: 'steps' }, week.swap.how.map(x => el('li', {}, x))), el('p', { class: 'note' }, week.swap.note), el('p', { class: 'src' }, 'Coaching: ' + week.swap.source)));
-  return sec;
-}
-
-function restMain(day, n) {
-  const sec = el('section', {}, sectionHead(n, 'Mobility flow', `${day.minutes} min + walk`),
-    el('p', { class: 'goal' }, 'Optional. Every joint through its full range, plus balance and getting up off the floor.'),
-    day.mobility.map((x, xi) => moveItem(x, `mob:${day.date}:${xi}`)));
-  if (day.optional) sec.append(el('details', {}, el('summary', {}, day.optional.title),
-    el('ol', { class: 'steps' }, day.optional.how.map(x => el('li', {}, x))), el('p', { class: 'note' }, day.optional.note), el('p', { class: 'src' }, 'Source: ' + day.optional.source)));
-  return sec;
-}
-
-function hero(day, week) {
-  const [kname, kvar] = KIND[day.kind];
-  return el('section', { class: 'hero' },
-    el('div', { class: 'chips' }, el('span', { class: 'chip k' }, kname), el('span', { class: 'chip' }, `About ${day.minutes} min`),
-      day.kind === 'lift' ? el('span', { class: 'chip' }, loc === 'gym' ? 'Gym' : 'Home: floor, chair, your weights') : null),
-    el('h2', {}, day.title),
-    el('p', { class: 'meta' }, day.summary),
-    day.why ? el('p', { class: 'why' }, day.why) : null,
-    day.evidence ? el('details', {}, el('summary', {}, 'The evidence'), evidence(day.evidence), el('p', { class: 'src' }, 'Coaching: ' + day.source || '')) : null,
-    day.safety ? el('p', { class: 'safety' }, day.safety) : null,
-    day.baseline ? el('p', { class: 'safety' }, day.baseline) : null,
-    el('div', { class: 'bar' }, el('span', {})), el('div', { class: 'barlbl' }),
-    el('div', { class: 'phase' }, el('b', {}, `Week rule · ${week.phase.name}`), week.phase.rule));
-}
-
-function renderDay(week, day, isToday) {
-  const main = $('main');
-  main.style.setProperty('--k', `var(${KIND[day.kind][1]})`);
-  const parts = [hero(day, week)];
+function todayView(week, day, isToday) {
+  const parts = [brief(day, week)];
+  const tl = el('div', { class: 'tl' });
   let n = 1;
   if (day.kind === 'lift') {
-    parts.push(warmup(day, n++));
-    parts.push(el('section', {}, sectionHead(n++, 'Main lifts', 'about 40 min'),
-      el('p', { class: 'goal' }, 'Tick a set to start the rest timer. Your weight is remembered for next time.'),
-      day.lifts.map((ex, i) => exercise(ex, i, day.date))));
-    parts.push(cooldown(day, n++));
+    const wu = day.warmup.reduce((a, p) => a + p.minutes, 0);
+    tl.append(node(n++, '0:00', `Warm-up · ${wu} min`, [el('p', { class: 'lead' }, 'Get warm, armor the joints, rehearse the moves, then two lighter sets of the first lift.'),
+      day.warmup.map((p, pi) => [el('div', { class: 'part' }, p.part, el('small', {}, `  ${p.minutes} min · ${p.goal}`)), p.items.map((x, xi) => moveRow(x, `wu:${day.date}:${pi}:${xi}`))])]));
+    tl.append(node(n++, hm(wu), 'Main lifts · about 40 min', day.lifts.map((ex, i) => liftTile(ex, i, day.date))));
+    tl.append(coolNode(n++, hm(wu + 40), day));
   } else if (day.kind === 'rest') {
-    parts.push(restMain(day, n++));
+    tl.append(node(n++, 'MORNING · OPTIONAL', 'Mobility and a walk', [el('p', { class: 'lead' }, day.why), day.mobility.map((x, i) => moveRow(x, `mob:${day.date}:${i}`)),
+      day.optional ? el('details', { class: 'more' }, el('summary', {}, day.optional.title), el('ol', { class: 'plain' }, day.optional.how.map(x => el('li', {}, x))), el('p', { class: 'src' }, day.optional.note)) : null]));
   } else {
-    parts.push(ridePrep(day, n++, isToday));
-    parts.push(rideMain(day, week, n++));
-    parts.push(cooldown(day, n++));
+    const box = el('div', { class: 'wx' }, isToday ? 'Tap to check the next 3 hours where you are.' : 'The weather check works on the day itself.');
+    const wbtn = el('button', { type: 'button', class: 'btn ghost' }, 'Check ride weather');
+    wbtn.addEventListener('click', () => weather(box, true));
+    if (isToday && store.get('geo', '')) weather(box, false);
+    tl.append(node(n++, 'BEFORE YOU GO', 'Ride prep', [day.prep.map((x, i) => el('div', { class: 'row' }, toggle(`prep:${day.date}:${i}`, x), el('div', {}, x))), wbtn, box]));
+    const ride = [el('ol', { class: 'plain' }, day.how.map(x => el('li', {}, x)))];
+    if (day.intervals) {
+      const iv = day.intervals, blocks = [{ m: iv.warm, k: '--ride' }];
+      for (let r = 0; r < iv.rounds; r++) blocks.push({ m: iv.hard, k: '--hiit' }, { m: iv.easy, k: '--ride' });
+      ride.push(el('div', { class: 'shape', 'aria-hidden': 'true' }, blocks.map(b => el('div', { style: `flex:${b.m};background:var(${b.k});height:${b.k === '--hiit' ? 40 : 16}px` }))),
+        el('p', { class: 'src' }, 'The shape of the ride: tall blocks are the hard rounds.'));
+    }
+    ride.push(el('table', { class: 'eff' }, el('tbody', {}, day.effort.map(e => el('tr', {}, el('td', {}, e.zone), el('td', {}, e.feel, el('br'), el('span', { class: 'src' }, e.use)))))),
+      el('details', { class: 'more' }, el('summary', {}, week.swap.title), media(week.swap.video), el('ol', { class: 'plain' }, week.swap.how.map(x => el('li', {}, x))), el('p', { class: 'src' }, week.swap.note)));
+    tl.append(node(n++, '0:00', `${day.title} · ${day.minutes} min`, ride));
+    tl.append(coolNode(n++, hm(day.minutes), day));
   }
-  parts.push(longevity(day, week, n++));
-  parts.push(logBox(day, n++));
-  main.replaceChildren(...parts);
+  tl.append(stretchNode(n++, day, day.kind === 'rest'));
+  tl.append(logNode(n++, day));
+  parts.push(tl);
+  return parts;
+}
+
+function weekView(week, date) {
+  const w = weekFor(date, meta.startDate, meta.weeks);
+  const monday = addDays(date, -w.dayIndex);
+  const today = easternDate();
+  const rows = DAY_NAMES.map((nm, i) => {
+    const d = week.days[nm], ds = addDays(monday, i);
+    const b = el('button', { type: 'button', class: `wd${ds === today ? ' today' : ''}`, style: `--kc:var(${KIND[d.kind][1]})` },
+      el('div', { class: 'd' }, el('span', {}, nm.slice(0, 3)), el('b', {}, String(toUTC(ds).getUTCDate()))),
+      el('div', { class: 't' }, el('b', {}, d.title), el('span', {}, d.kind === 'rest' ? 'Optional' : `About ${d.minutes} min · ${KIND[d.kind][0]}`)),
+      el('span', { class: 'bar' }));
+    b.addEventListener('click', () => { setView('today'); go(ds); });
+    return b;
+  });
+  return [el('div', { class: 'sectionhead' }, el('h2', {}, `Week ${w.real}: ${week.phase.name}`), el('p', {}, week.phase.rule)),
+    el('div', { class: 'wk' }, rows),
+    el('div', { class: 'sectionhead' }, el('h2', {}, 'Rules')), el('div', { class: 'ci', style: 'margin-top:10px' }, el('ol', { class: 'plain' }, week.rules.map(r => el('li', {}, r))))];
+}
+
+const isBuilt = c => !c.built.startsWith('Habit') && !c.built.startsWith('Not yet');
+function longView(day) {
+  const built = meta.core.filter(isBuilt).length;
+  return [el('div', { class: 'sectionhead' }, el('h2', {}, 'The longevity core'),
+      el('p', {}, `What Huberman, Peter Attia, the movement coaches and the research agree on. ${built} of ${meta.core.length} are built into your week; the rest are daily habits.`)),
+    el('div', { class: 'core' }, meta.core.map(c => el('div', { class: 'ci' },
+      el('div', { class: 'top' }, el('h3', {}, c.name), el('span', { class: `badge ${isBuilt(c) ? 'in' : 'hb'}` }, isBuilt(c) ? 'Built in' : 'Habit')),
+      el('p', { class: 'dose' }, c.dose), el('p', { class: 'built' }, c.built),
+      el('details', { class: 'more' }, el('summary', {}, 'Why'), el('p', { class: 'ev' }, c.why), el('p', { class: 'who' }, `Agreed by: ${c.who}`))))),
+    el('div', { class: 'sectionhead' }, el('h2', {}, 'Today, on top of the workout')),
+    el('div', { class: 'core' }, day.longevity.map(h => el('div', { class: 'ci' }, el('h3', {}, h.name), el('p', { class: 'dose' }, h.dose), el('p', { class: 'built' }, h.why))),
+      day.mental ? el('div', { class: 'ci' }, el('h3', {}, 'Mind'), el('p', { class: 'dose' }, el('a', { href: day.mental.url, target: '_blank', rel: 'noopener' }, day.mental.name), ` · ${day.mental.dose}`)) : null),
+    el('div', { class: 'tl', style: 'margin-top:24px' }, stretchNode(1, day, true))];
+}
+
+function paintView() {
+  const k = `var(${KIND[currentDay.kind][1]})`;
+  $('app').style.setProperty('--k', k);
+  const isToday = current === easternDate();
+  const parts = view === 'week' ? weekView(currentWeek, current) : view === 'long' ? longView(currentDay) : todayView(currentWeek, currentDay, isToday);
+  $('main').replaceChildren(...parts.flat(Infinity).filter(Boolean));
   updateProgress();
 }
 
@@ -336,21 +317,20 @@ async function render(date) {
   const dayName = DAY_NAMES[w.dayIndex];
   const day = week.days[dayName];
   const today = easternDate();
-  current = date;
+  current = date; currentWeek = week; currentDay = day;
   $('kicker').textContent = `Week ${w.real} · ${week.phase.name}${w.before ? ' · starts Nov 16' : ''}`;
-  $('title').textContent = date === today ? `Today: ${day.title}` : `${dayName}: ${day.title}`;
-  $('sub').textContent = `${dayName}, ${shortDate(date)}`;
+  $('title').textContent = day.title;
+  $('sub').textContent = `${date === today ? 'Today · ' : ''}${dayName}, ${shortDate(date)}`;
   const monday = addDays(date, -w.dayIndex);
   $('days').replaceChildren(...DAY_NAMES.map((nm, i) => {
     const d = addDays(monday, i);
-    const k = KIND[week.days[nm].kind][1];
-    const b = el('button', { type: 'button', 'aria-pressed': String(d === date), class: d === today ? 'today' : '', 'aria-label': `${nm} ${shortDate(d)}: ${week.days[nm].title}` },
-      nm.slice(0, 3), el('b', {}, String(toUTC(d).getUTCDate())), el('i', { style: `--k:var(${k})` }));
+    const b = el('button', { type: 'button', 'aria-pressed': String(d === date), class: d === today ? 'today' : '', style: `--kc:var(${KIND[week.days[nm].kind][1]})`, 'aria-label': `${nm} ${shortDate(d)}: ${week.days[nm].title}` },
+      nm.slice(0, 3), el('b', {}, String(toUTC(d).getUTCDate())));
     b.addEventListener('click', () => go(d));
     return b;
   }));
   $('date').value = date;
-  renderDay(week, day, date === today);
+  paintView();
 }
 
 function go(date) {
@@ -360,14 +340,16 @@ function go(date) {
   render(date).catch(fail);
   window.scrollTo(0, 0);
 }
-
+function setView(v) {
+  view = v;
+  for (const [id, name] of [['tab-today', 'today'], ['tab-week', 'week'], ['tab-long', 'long']]) $(id).setAttribute('aria-pressed', String(v === name));
+}
 function setLoc(v) {
   loc = v; store.set('loc', v);
   $('loc-home').setAttribute('aria-pressed', String(v === 'home'));
   $('loc-gym').setAttribute('aria-pressed', String(v === 'gym'));
 }
-
-function fail() { $('main').replaceChildren(el('section', {}, el('p', {}, 'The workout could not load. Pull to refresh.'))); }
+function fail() { $('main').replaceChildren(el('section', { class: 'brief' }, el('p', {}, 'The workout could not load. Pull to refresh.'))); }
 
 async function start() {
   const r = await fetch('./program.json');
@@ -375,12 +357,16 @@ async function start() {
   meta = await r.json();
   $('version').textContent = 'Program ' + meta.version;
   setLoc(loc);
-  $('loc-home').addEventListener('click', () => { setLoc('home'); render(current).catch(fail); });
-  $('loc-gym').addEventListener('click', () => { setLoc('gym'); render(current).catch(fail); });
+  $('loc-home').addEventListener('click', () => { setLoc('home'); paintView(); });
+  $('loc-gym').addEventListener('click', () => { setLoc('gym'); paintView(); });
+  for (const [id, name] of [['tab-today', 'today'], ['tab-week', 'week'], ['tab-long', 'long']])
+    $(id).addEventListener('click', () => { setView(name); paintView(); window.scrollTo(0, 0); });
   $('date').addEventListener('change', e => { if (validDate(e.target.value)) go(e.target.value); });
   $('timer').addEventListener('click', () => { clearInterval(timerId); $('timer').classList.remove('on'); });
-  const q = new URLSearchParams(location.search).get('date');
-  await render(validDate(q) ? q : easternDate());
+  const q = new URLSearchParams(location.search);
+  const v = q.get('view');
+  if (v === 'week' || v === 'long') setView(v);
+  await render(validDate(q.get('date')) ? q.get('date') : easternDate());
 }
 
 start().catch(fail);

@@ -5,6 +5,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 meta = json.load(open(os.path.join(ROOT, "program.json")))
 start = dt.date.fromisoformat(meta["startDate"])
 errors = []
+if len(meta.get("core", [])) < 10: errors.append("program.json: longevity core missing")
+if len(meta.get("stretch", [])) < 6: errors.append("program.json: longevity stretch missing")
 for w in range(1, meta["weeks"] + 1):
     week = json.load(open(os.path.join(ROOT, "weeks", f"week-{w:02d}.json")))
     if len(week["days"]) != 7: errors.append(f"week {w}: {len(week['days'])} days")
