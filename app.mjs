@@ -82,6 +82,55 @@ function miniMedia(v) {
   b.addEventListener('click', () => b.replaceWith(player(v)));
   return b;
 }
+/* ---------- Moving demos and pictures (from Codex's Workout Hub) ---------- */
+// A loop loads only when it scrolls into view, plays silently, and pauses when off screen.
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+  const v = e.target;
+  if (e.isIntersecting) { if (!v.getAttribute('src')) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
+}), { rootMargin: '150px' }) : null;
+function loop(c, onFail) {
+  if (!c) return null;
+  const v = el('video', { class: 'loop', loop: '', playsinline: '', 'webkit-playsinline': '', preload: 'none', 'data-src': c.src, 'aria-label': `Moving demo by ${c.by}` });
+  v.muted = true; v.defaultMuted = true; v.setAttribute('muted', '');
+  const fig = el('figure', { class: 'fig' }, v, el('figcaption', {}, `Moving demo · ${c.by}`, c.note ? ` · ${c.note}` : ''));
+  v.addEventListener('error', () => { if (onFail) onFail(); else fig.replaceChildren(el('figcaption', {}, 'The moving demo did not load. Use the coach video.')); });
+  if (io) io.observe(v); else { v.src = c.src; v.autoplay = true; }
+  return fig;
+}
+function still(p, cls = 'fig') {
+  if (!p) return null;
+  return el('figure', { class: cls }, el('img', { src: p.src, alt: p.cap, loading: 'lazy' }), el('figcaption', {}, p.cap, p.note ? ` · ${p.note}` : ''));
+}
+// One media box per lift: moving demo, pictures, coach video. Tabs pick which one shows.
+function mediaTabs(ex, g) {
+  const opts = [];
+  const c = g ? (ex.gymClip || (ex.gymVideo ? null : ex.clip)) : ex.clip;
+  if (c) opts.push(['Demo', () => loop(c, () => fallback())]);
+  if (ex.pic && !g) opts.push(['Pictures', () => still(ex.pic)]);
+  const v = g && ex.gymVideo ? ex.gymVideo : ex.video;
+  if (v) opts.push([v.yt ? 'Coach video' : 'Coach guide', () => media(v)]);
+  if (!opts.length) return null;
+  const box = el('div', { class: 'mbox' });
+  // If the demo clip can't load, quietly show the next option instead.
+  const fallback = () => {
+    const rest = opts.slice(1);
+    if (!rest.length) { box.replaceChildren(el('p', { class: 'src' }, 'The demo did not load.')); return; }
+    opts.splice(0, 1); bar?.querySelector('button')?.remove();
+    bar?.querySelector('button')?.setAttribute('aria-pressed', 'true');
+    box.replaceChildren(opts[0][1]());
+  };
+  let bar = null;
+  box.append(opts[0][1]());
+  if (opts.length === 1) return box;
+  bar = el('div', { class: 'mtabs', role: 'group', 'aria-label': `How ${ex.name} looks` });
+  for (const [name, make] of opts) {
+    const b = el('button', { type: 'button', 'aria-pressed': String(name === opts[0][0]) }, name);
+    b.addEventListener('click', () => { bar.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); box.replaceChildren(make()); });
+    bar.append(b);
+  }
+  return el('div', {}, bar, box);
+}
+
 const evidence = list => (list || []).map(e => el('p', { class: 'ev' }, e.text, e.url ? [' ', el('a', { href: e.url, target: '_blank', rel: 'noopener' }, 'Source')] : null));
 
 /* ---------- Progress ---------- */
@@ -123,7 +172,13 @@ function moveRow(x, key) {
       el('p', {}, x.cue),
       where && where !== 'Floor.' ? el('p', { class: 'ds' }, where) : null,
       x.why ? el('p', { class: 'why-s' }, x.why) : null,
-      miniMedia(x.video)));
+      x.pic ? still(x.pic, 'fig small') : null,
+      el('div', { class: 'chips' }, x.clip ? loopChip(x.clip) : null, miniMedia(x.video))));
+}
+function loopChip(c) {
+  const b = el('button', { type: 'button', class: 'chipbtn' }, 'Moving demo');
+  b.addEventListener('click', () => b.replaceWith(loop(c)));
+  return b;
 }
 
 function liftTile(ex, i, date) {
@@ -135,7 +190,7 @@ function liftTile(ex, i, date) {
   const paint = () => {
     const g = gym !== other;
     where.replaceChildren(el('span', { class: 'lab' }, g ? 'Gym' : 'Home'), el('span', {}, g ? ex.gym : ex.home));
-    vid.replaceChildren(media(g && ex.gymVideo ? ex.gymVideo : ex.video));
+    vid.replaceChildren(mediaTabs(ex, g));
     swap.textContent = other ? 'Back' : (gym ? 'See the home version' : 'See the gym version');
   };
   swap.addEventListener('click', () => { other = !other; paint(); });
@@ -144,10 +199,11 @@ function liftTile(ex, i, date) {
   const wt = el('input', { class: 'wt', type: 'text', inputmode: 'decimal', placeholder: 'Weight', 'aria-label': `${ex.name} weight`, value: store.get(wkey, '') });
   wt.addEventListener('change', () => store.set(wkey, wt.value.trim()));
   const sets = el('div', { class: 'sets' });
-  for (let s = 1; s <= ex.sets; s++) sets.append(toggle(`set:${date}:${i}:${s}`, `${ex.name} set ${s} done`, () => ex.rest && startTimer(ex.rest), 'set', String(s)));
+  const n = setCount(ex, date);
+  for (let s = 1; s <= n; s++) sets.append(toggle(`set:${date}:${i}:${s}`, `${ex.name} set ${s} done`, () => ex.rest && startTimer(ex.rest), 'set', String(s)));
   sets.append(wt);
   return el('div', { class: 'lift' },
-    el('div', { class: 'lh' }, el('span', { class: 'num' }, String(i + 1).padStart(2, '0')), el('h3', {}, ex.name), el('span', { class: 'dose' }, `${ex.sets}×${ex.reps}`)),
+    el('div', { class: 'lh' }, el('span', { class: 'num' }, String(i + 1).padStart(2, '0')), el('h3', {}, ex.name), el('span', { class: 'dose' }, `${setCount(ex, date)}×${ex.reps}`)),
     el('div', { class: 'lmeta' }, `Rest ${ex.rest >= 120 ? ex.rest / 60 + ' min' : ex.rest + ' sec'} · ticking a set starts the timer · ${ex.source}`),
     vid, where, swap,
     ex.noGear ? el('p', { class: 'nogear' }, ex.noGear) : null,
@@ -162,6 +218,32 @@ function liftTile(ex, i, date) {
       el('p', { class: 'src' }, el('a', { href: ex.demo, target: '_blank', rel: 'noopener' }, `More ${ex.source.split(' · ')[0]} videos`))));
 }
 
+// Readiness: "so-so" drops one set from each lift (never below 1), as in Codex's hub.
+const readyOf = date => store.get(`ready:${date}`, '');
+const setCount = (ex, date) => readyOf(date) === 'yellow' ? Math.max(1, ex.sets - 1) : ex.sets;
+
+function readyNode(n, day) {
+  const R = meta.readiness, key = `ready:${day.date}`;
+  const bar = el('div', { class: 'rd', role: 'group', 'aria-label': 'How do you feel today' });
+  const out = el('p', { class: 'rd-out' });
+  const v = readyOf(day.date);
+  for (const k of ['green', 'yellow', 'red']) {
+    const b = el('button', { type: 'button', class: `rb ${k}`, 'aria-pressed': String(v === k) }, R[k].label);
+    b.addEventListener('click', () => { store.set(key, k); paintView(); });
+    bar.append(b);
+  }
+  out.textContent = v ? R[v].text : 'Pick one before you start. It sets today\'s dose.';
+  return node(n, 'FIRST · 30 SEC', 'How do you feel?', [bar, out], !v || v !== 'green');
+}
+
+function mindNode(n, day) {
+  const m = day.mental;
+  if (!m) return null;
+  return node(n, 'AFTER · 3–5 MIN', 'Mind', [still({ src: 'img/mind.jpg', cap: 'Sit tall, feet down, hands on the thighs' }, 'fig small'),
+    el('p', {}, el('a', { href: m.url, target: '_blank', rel: 'noopener' }, m.name), ` · ${m.dose}`),
+    el('p', { class: 'lead' }, 'Breathe normally. When your mind wanders, notice it and come back to the breath. That return is the practice.')], false);
+}
+
 function stretchNode(n, day, open) {
   return node(n, 'ANY TIME TODAY · 10 MIN', 'Longevity stretch', [
     el('p', { class: 'lead' }, 'The short list every movement coach agrees on: hips, hamstrings, ankles, upper back, shoulders, balance. Evening works well.'),
@@ -174,12 +256,16 @@ function coolNode(n, clock, day) {
 }
 
 function logText(day) {
+  const r = readyOf(day.date);
+  return logCore(day) + (r ? ` Felt: ${meta.readiness[r].label.toLowerCase()}.` : '');
+}
+function logCore(day) {
   const d = `${day.weekday.slice(0, 3)} ${shortDate(day.date)}`;
   if (day.kind !== 'lift') return `Done: ${day.title}, ${d}${day.kind === 'rest' ? '' : `, ${day.minutes} min`}.`;
   const parts = day.lifts.map((ex, i) => {
-    const done = [...Array(ex.sets)].filter((_, s) => store.get(`set:${day.date}:${i}:${s + 1}`, 'false') === 'true').length;
+    const done = [...Array(setCount(ex, day.date))].filter((_, s) => store.get(`set:${day.date}:${i}:${s + 1}`, 'false') === 'true').length;
     const w = store.get(`wt:${ex.name}`, '');
-    return `${ex.name}${w ? ' ' + w : ''}: ${done}/${ex.sets} sets`;
+    return `${ex.name}${w ? ' ' + w : ''}: ${done}/${setCount(ex, day.date)} sets`;
   });
   return `Done: ${day.title} (${loc}), ${d}. ${parts.join('; ')}.`;
 }
@@ -195,7 +281,28 @@ function logNode(n, day) {
   return node(n, 'DONE', 'Tell Duet', [el('p', { class: 'lead' }, 'One tap copies your ticks and weights. Or just say "done", "skip", or your numbers.'), btn, ta]);
 }
 
-async function weather(box, ask) {
+/* ---------- Ride weather: rain, storms and wind for the ride itself ----------
+   Codex's hub checked rain every 15 minutes, lightning, alerts and wind for out-and-back.
+   Here the location stays on this phone (never in the public page): Open-Meteo for the
+   15-minute forecast and wind, the National Weather Service for alerts. */
+const COMPASS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+const dirName = deg => COMPASS[Math.round((((deg % 360) + 360) % 360) / 45) % 8];
+const clockET = ms => new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+function meanDir(degs) {
+  const x = degs.reduce((a, d) => a + Math.cos(d * Math.PI / 180), 0), y = degs.reduce((a, d) => a + Math.sin(d * Math.PI / 180), 0);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+export function rideCall({ thunder, alerts, rainIn, pop, wind, gust, from }) {
+  const storm = thunder || alerts.some(a => /thunder|tornado|hurricane|tropical|lightning/i.test(a));
+  const verdict = storm ? 'Storms nearby: do the kettlebell circuit.'
+    : rainIn >= 0.05 || pop >= 60 ? 'Rain likely during the ride: do the kettlebell circuit.'
+    : pop >= 30 || rainIn > 0 ? 'Some chance of rain: check the radar before you go.' : 'Good to ride.';
+  const windLine = wind < 4 ? 'Almost no wind: any direction works.'
+    : `Wind from the ${from} at ${wind} mph${gust > wind + 3 ? `, gusts ${gust}` : ''}. Head out toward the ${from}, into the wind, so it pushes you home when you're tired.` +
+      (gust >= 25 ? ' Gusty: easy on bridges and open stretches.' : '');
+  return { verdict, windLine, swap: verdict.includes('kettlebell') };
+}
+async function weather(box, ask, minutes) {
   const saved = store.get('geo', '');
   let lat, lon;
   if (saved) [lat, lon] = saved.split(',');
@@ -206,17 +313,106 @@ async function weather(box, ask) {
       lat = p.coords.latitude.toFixed(2); lon = p.coords.longitude.toFixed(2); store.set('geo', `${lat},${lon}`);
     } catch { box.textContent = 'Location was not shared. Check your weather app.'; return; }
   } else return;
-  box.textContent = 'Checking the forecast…';
+  box.textContent = 'Checking rain, storms and wind for your ride…';
+  const now = Date.now(), end = now + (minutes + 15) * 6e4;
   try {
-    const pt = await (await fetch(`https://api.weather.gov/points/${lat},${lon}`)).json();
-    const fc = await (await fetch(pt.properties.forecastHourly)).json();
-    const next = fc.properties.periods.filter(p => new Date(p.endTime) > Date.now()).slice(0, 3);
-    const rain = Math.max(...next.map(p => p.probabilityOfPrecipitation?.value || 0));
-    const storm = next.some(p => /thunder|lightning/i.test(p.shortForecast));
-    const verdict = storm ? 'Storms nearby: do the kettlebell circuit.' : rain >= 60 ? 'Rain likely: do the kettlebell circuit.' : rain >= 30 ? 'Some chance of rain: check the radar first.' : 'Good to ride.';
-    const p0 = next[0];
-    box.replaceChildren(el('b', {}, verdict), `Next 3 hours: ${p0.temperature}°${p0.temperatureUnit}, ${p0.shortForecast.toLowerCase()}, rain up to ${rain}%, wind ${p0.windSpeed}.`);
-  } catch { box.textContent = 'The forecast did not load. Check your weather app.'; }
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      '&minutely_15=precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,apparent_temperature' +
+      '&hourly=precipitation_probability&daily=sunrise&forecast_minutely_15=16&past_minutely_15=1&forecast_hours=4&forecast_days=1' +
+      '&timezone=America%2FNew_York&wind_speed_unit=mph&precipitation_unit=inch&temperature_unit=fahrenheit&timeformat=unixtime';
+    const [om, al] = await Promise.all([
+      fetch(u).then(r => { if (!r.ok) throw new Error('forecast'); return r.json(); }),
+      fetch(`https://api.weather.gov/alerts/active?point=${lat},${lon}`, { headers: { Accept: 'application/geo+json' } }).then(r => r.json()).catch(() => null)]);
+    const q = om.minutely_15;
+    const idx = q.time.map((t, i) => [t * 1000, i]).filter(([t]) => t >= now - 9e5 && t <= end).map(([, i]) => i);
+    if (!idx.length) throw new Error('no samples');
+    const pick = k => idx.map(i => q[k][i]).filter(v => v != null);
+    const h = om.hourly;
+    const pops = h.time.map((t, i) => [t * 1000, h.precipitation_probability[i]]).filter(([t]) => t >= now - 36e5 && t <= end).map(([, p]) => p ?? 0);
+    const alerts = (al?.features || []).map(f => f.properties.event);
+    const wind = Math.round(pick('wind_speed_10m').reduce((a, b) => a + b, 0) / Math.max(1, pick('wind_speed_10m').length));
+    const call = rideCall({
+      thunder: pick('weather_code').some(c => c >= 95), alerts,
+      rainIn: pick('precipitation').reduce((a, b) => a + b, 0), pop: Math.max(0, ...pops),
+      wind, gust: Math.round(Math.max(0, ...pick('wind_gusts_10m'))), from: dirName(meanDir(pick('wind_direction_10m'))),
+    });
+    const t = Math.round(q.temperature_2m[idx[0]]), feels = Math.round(q.apparent_temperature[idx[0]]);
+    const sunrise = om.daily?.sunrise?.[0] ? om.daily.sunrise[0] * 1000 : null;
+    box.classList.toggle('bad', call.swap);
+    box.replaceChildren(el('b', {}, call.verdict), el('ul', { class: 'wxl' },
+      el('li', {}, call.windLine),
+      el('li', {}, `${t}°F, feels like ${feels}°F. Rain chance up to ${Math.max(0, ...pops)}% until ${clockET(end)}.` + (feels >= 82 ? ' Warm and humid: extra water and electrolytes.' : '')),
+      sunrise && sunrise > now ? el('li', {}, `Sunrise ${clockET(sunrise)}: lights on until then.`) : null,
+      alerts.length ? el('li', {}, `Weather alert: ${[...new Set(alerts)].join(', ')}.`) : null),
+      el('p', { class: 'src' }, `Checked ${clockET(now)} for the next ${minutes + 15} min. Open-Meteo and the National Weather Service.`));
+  } catch {
+    try {
+      const pt = await (await fetch(`https://api.weather.gov/points/${lat},${lon}`)).json();
+      const fc = await (await fetch(pt.properties.forecastHourly)).json();
+      const next = fc.properties.periods.filter(p => new Date(p.endTime) > now).slice(0, 3);
+      const rain = Math.max(...next.map(p => p.probabilityOfPrecipitation?.value || 0));
+      const storm = next.some(p => /thunder|lightning/i.test(p.shortForecast));
+      const p0 = next[0];
+      box.replaceChildren(el('b', {}, storm ? 'Storms nearby: do the kettlebell circuit.' : rain >= 60 ? 'Rain likely: do the kettlebell circuit.' : rain >= 30 ? 'Some chance of rain: check the radar first.' : 'Good to ride.'),
+        `Next 3 hours: ${p0.temperature}°${p0.temperatureUnit}, ${p0.shortForecast.toLowerCase()}, rain up to ${rain}%, wind ${p0.windDirection} ${p0.windSpeed}.`);
+    } catch { box.textContent = 'The forecast did not load. Check your weather app.'; }
+  }
+}
+
+/* ---------- Ride timer: calls each block of the ride (Codex's v3 ride timeline) ---------- */
+const ZONE = { easy: ['--ride', 14, .55], steady: ['--ride', 24, 1], hard: ['--hiit', 40, 1] };
+let ride = null;
+function beep(times = 1) {
+  try {
+    const ctx = ride?.ctx; if (!ctx) return;
+    for (let i = 0; i < times; i++) {
+      const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime + i * .35;
+      o.frequency.value = 880; g.gain.setValueAtTime(.25, t); g.gain.exponentialRampToValueAtTime(.001, t + .25);
+      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + .26);
+    }
+  } catch {}
+}
+function stopRide() {
+  if (!ride) return;
+  clearInterval(ride.id); ride.lock?.release?.().catch(() => {}); ride.ctx?.close?.().catch(() => {});
+  ride = null; $('ridebar').classList.remove('on');
+  document.querySelectorAll('.rt li.now').forEach(li => li.classList.remove('now'));
+  document.querySelectorAll('[data-ridebtn]').forEach(b => { b.textContent = 'Start ride timer'; });
+}
+function startRide(day) {
+  stopRide();
+  const t = day.timeline, t0 = Date.now();
+  ride = { id: 0, lock: null, ctx: null, last: -1, date: day.date };
+  try { ride.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
+  navigator.wakeLock?.request('screen').then(l => { if (ride) ride.lock = l; }).catch(() => {});
+  document.querySelectorAll('[data-ridebtn]').forEach(b => { b.textContent = 'Stop ride timer'; });
+  document.querySelectorAll('[data-ridelist]').forEach(d => { d.open = true; });
+  const bar = $('ridebar'); bar.classList.add('on');
+  const tick = () => {
+    const s = Math.floor((Date.now() - t0) / 1000), i = t.findIndex(b => s < b.to * 60);
+    if (i < 0) { beep(3); navigator.vibrate?.([300, 150, 300, 150, 300]); stopRide(); return; }
+    if (i !== ride.last) {
+      if (ride.last >= 0) { beep(t[i].zone === 'hard' ? 2 : 1); navigator.vibrate?.(t[i].zone === 'hard' ? [400, 150, 400] : [250]); }
+      ride.last = i;
+      document.querySelectorAll('.rt li').forEach(li => li.classList.toggle('now', +li.dataset.i === i));
+    }
+    const b = t[i], left = b.to * 60 - s;
+    bar.style.setProperty('--zc', `var(${ZONE[b.zone][0]})`);
+    bar.replaceChildren(el('b', {}, `${b.name} · ${mmss(left)}`), el('span', {}, `${b.effort} · next: ${t[i + 1] ? t[i + 1].name : 'cool-down'} · ${mmss(s)} in`));
+  };
+  ride.id = setInterval(tick, 1000); tick();
+}
+function rideTimeline(day) {
+  const t = day.timeline;
+  const shape = el('div', { class: 'shape', 'aria-hidden': 'true' }, t.map(b => el('div', { style: `flex:${b.to - b.from};background:var(${ZONE[b.zone][0]});height:${ZONE[b.zone][1]}px;opacity:${ZONE[b.zone][2]}` })));
+  const btn = el('button', { type: 'button', class: 'btn full', 'data-ridebtn': '' }, ride && ride.date === day.date ? 'Stop ride timer' : 'Start ride timer');
+  btn.addEventListener('click', () => (ride ? stopRide() : startRide(day)));
+  const open = ride && ride.date === day.date;
+  const rows = el('ol', { class: 'rt' }, t.map((b, i) => el('li', { 'data-i': String(i), class: ride && ride.date === day.date && ride.last === i ? 'now' : null, style: `--zc:var(${ZONE[b.zone][0]})` },
+    el('span', { class: 'mm' }, `${b.from}–${b.to}`),
+    el('div', {}, el('b', {}, b.name), el('span', { class: 'eff' }, `  ${b.effort}`), el('p', {}, b.cue), el('p', { class: 'win' }, `Win: ${b.win}`)))));
+  const list = el('details', Object.assign({ class: 'more', 'data-ridelist': '' }, open ? { open: '' } : {}), el('summary', {}, `Minute by minute (${t.length} blocks)`), rows);
+  return [shape, el('p', { class: 'src' }, 'Tall blocks are the hard parts. The timer beeps and buzzes at every change and keeps the screen on.'), btn, list];
 }
 
 /* ---------- Views ---------- */
@@ -229,6 +425,7 @@ function brief(day, week) {
     day.evidence ? el('details', { class: 'more' }, el('summary', {}, 'The evidence'), evidence(day.evidence)) : null,
     day.safety ? el('div', { class: 'callout' }, day.safety) : null,
     day.baseline ? el('div', { class: 'callout' }, day.baseline) : null,
+    readyOf(day.date) && readyOf(day.date) !== 'green' && day.kind !== 'rest' ? el('div', { class: `callout ready ${readyOf(day.date)}` }, el('b', {}, `Today: ${meta.readiness[readyOf(day.date)].label}. `), meta.readiness[readyOf(day.date)].text) : null,
     el('div', { class: 'rule' }, el('b', {}, `This week · ${week.phase.name}. `), week.phase.rule));
 }
 
@@ -236,6 +433,7 @@ function todayView(week, day, isToday) {
   const parts = [brief(day, week)];
   const tl = el('div', { class: 'tl' });
   let n = 1;
+  if (day.kind !== 'rest' && meta.readiness) tl.append(readyNode(n++, day));
   if (day.kind === 'lift') {
     const wu = day.warmup.reduce((a, p) => a + p.minutes, 0);
     tl.append(node(n++, '0:00', `Warm-up · ${wu} min`, [el('p', { class: 'lead' }, 'Get warm, armor the joints, rehearse the moves, then two lighter sets of the first lift.'),
@@ -246,23 +444,20 @@ function todayView(week, day, isToday) {
     tl.append(node(n++, 'MORNING · OPTIONAL', 'Mobility and a walk', [el('p', { class: 'lead' }, day.why), day.mobility.map((x, i) => moveRow(x, `mob:${day.date}:${i}`)),
       day.optional ? el('details', { class: 'more' }, el('summary', {}, day.optional.title), el('ol', { class: 'plain' }, day.optional.how.map(x => el('li', {}, x))), el('p', { class: 'src' }, day.optional.note)) : null]));
   } else {
-    const box = el('div', { class: 'wx' }, isToday ? 'Tap to check the next 3 hours where you are.' : 'The weather check works on the day itself.');
-    const wbtn = el('button', { type: 'button', class: 'btn ghost' }, 'Check ride weather');
-    wbtn.addEventListener('click', () => weather(box, true));
-    if (isToday && store.get('geo', '')) weather(box, false);
+    const box = el('div', { class: 'wx' }, isToday ? 'Tap for rain, storms and which way to ride out, for your ride window where you are.' : 'The weather check works on the day itself.');
+    const wbtn = el('button', { type: 'button', class: 'btn ghost' }, 'Check ride weather and wind');
+    wbtn.addEventListener('click', () => weather(box, true, day.minutes));
+    if (isToday && store.get('geo', '')) weather(box, false, day.minutes);
     tl.append(node(n++, 'BEFORE YOU GO', 'Ride prep', [day.prep.map((x, i) => el('div', { class: 'row' }, toggle(`prep:${day.date}:${i}`, x), el('div', {}, x))), wbtn, box]));
-    const ride = [el('ol', { class: 'plain' }, day.how.map(x => el('li', {}, x)))];
-    if (day.intervals) {
-      const iv = day.intervals, blocks = [{ m: iv.warm, k: '--ride' }];
-      for (let r = 0; r < iv.rounds; r++) blocks.push({ m: iv.hard, k: '--hiit' }, { m: iv.easy, k: '--ride' });
-      ride.push(el('div', { class: 'shape', 'aria-hidden': 'true' }, blocks.map(b => el('div', { style: `flex:${b.m};background:var(${b.k});height:${b.k === '--hiit' ? 40 : 16}px` }))),
-        el('p', { class: 'src' }, 'The shape of the ride: tall blocks are the hard rounds.'));
-    }
-    ride.push(el('table', { class: 'eff' }, el('tbody', {}, day.effort.map(e => el('tr', {}, el('td', {}, e.zone), el('td', {}, e.feel, el('br'), el('span', { class: 'src' }, e.use)))))),
+    const rideParts = [el('ol', { class: 'plain' }, day.how.map(x => el('li', {}, x)))];
+    if (day.timeline) rideParts.push(rideTimeline(day));
+    rideParts.push(el('table', { class: 'eff' }, el('tbody', {}, day.effort.map(e => el('tr', {}, el('td', {}, e.zone), el('td', {}, e.feel, el('br'), el('span', { class: 'src' }, e.use)))))),
       el('details', { class: 'more' }, el('summary', {}, week.swap.title), media(week.swap.video), el('ol', { class: 'plain' }, week.swap.how.map(x => el('li', {}, x))), el('p', { class: 'src' }, week.swap.note)));
-    tl.append(node(n++, '0:00', `${day.title} · ${day.minutes} min`, ride));
+    tl.append(node(n++, '0:00', `${day.title} · ${day.minutes} min`, rideParts));
     tl.append(coolNode(n++, hm(day.minutes), day));
   }
+  const mind = mindNode(n, day);
+  if (mind) { tl.append(mind); n++; }
   tl.append(stretchNode(n++, day, day.kind === 'rest'));
   tl.append(logNode(n++, day));
   parts.push(tl);

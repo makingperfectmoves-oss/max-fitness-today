@@ -7,6 +7,7 @@ start = dt.date.fromisoformat(meta["startDate"])
 errors = []
 if len(meta.get("core", [])) < 10: errors.append("program.json: longevity core missing")
 if len(meta.get("stretch", [])) < 6: errors.append("program.json: longevity stretch missing")
+if set(meta.get("readiness", {})) != {"green", "yellow", "red"}: errors.append("program.json: readiness check missing")
 for w in range(1, meta["weeks"] + 1):
     week = json.load(open(os.path.join(ROOT, "weeks", f"week-{w:02d}.json")))
     if len(week["days"]) != 7: errors.append(f"week {w}: {len(week['days'])} days")
@@ -22,6 +23,14 @@ for w in range(1, meta["weeks"] + 1):
                 if not ex.get(k): errors.append(f"week {w} {name} {ex.get('name')}: missing {k}")
             v = ex["video"]
             if not (v.get("yt") or v.get("url", "").startswith("https://")): errors.append(f"week {w} {name} {ex['name']}: bad video")
+        for ex in d.get("lifts", []) + moves:
+            for c in (ex.get("clip"), ex.get("gymClip")):
+                if c and not c["src"].startswith("https://"): errors.append(f"week {w} {name} {ex['name']}: bad clip")
+            if ex.get("pic") and not os.path.exists(os.path.join(ROOT, ex["pic"]["src"])): errors.append(f"week {w} {name} {ex['name']}: missing picture")
+        if d["kind"] in ("ride", "intervals"):
+            t = d.get("timeline", [])
+            if not t or t[0]["from"] != 0 or t[-1]["to"] != d["minutes"] or any(x["to"] != y["from"] for x, y in zip(t, t[1:])):
+                errors.append(f"week {w} {name}: ride timeline does not cover 0-{d['minutes']} min")
         if d["kind"] != "rest" and not d.get("cooldown"): errors.append(f"week {w} {name}: no cool-down")
         if not d.get("longevity"): errors.append(f"week {w} {name}: no longevity habits")
 for i in range(52 * 7):
@@ -33,5 +42,5 @@ for folder in ("weeks", "brief"):
         t = open(os.path.join(ROOT, folder, f)).read().lower()
         for b in banned:
             if b in t: errors.append(f"{folder}/{f}: contains '{b}'")
-print("\n".join(errors) if errors else f"OK: {meta['weeks']} weeks, 364 brief lines, every lift has home, gym, a source, a video and how-to steps")
+print("\n".join(errors) if errors else f"OK: {meta['weeks']} weeks, 364 brief lines, every lift has home, gym, a source, a video and how-to steps; pictures exist; ride timelines add up")
 sys.exit(1 if errors else 0)

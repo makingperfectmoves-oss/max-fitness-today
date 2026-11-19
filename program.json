@@ -1,5 +1,5 @@
 {
- "version": "v4.2 (Nov 16 2026): new design, longevity core and daily stretch. Refined after the knowledge base is built.",
+ "version": "v5.0 (Nov 19 2026): Codex's moving demos, start-to-finish pictures, ride timer and wind plan, and readiness check, merged into v4.2.",
  "timeZone": "America/New_York",
  "startDate": "2026-11-16",
  "weeks": 12,
@@ -179,6 +179,10 @@
     "t": 146,
     "title": "Side-lying open book",
     "by": "JR Stretch"
+   },
+   "clip": {
+    "src": "https://app-media-r2.fitbod.me/v2/3353/videos/full_720p.mp4",
+    "by": "Fitbod"
    }
   },
   {
@@ -222,6 +226,20 @@
    "why": "Not being able to stand 10 seconds on one leg in mid-life was linked to higher death risk (Araújo et al., BJSM, 2022)."
   }
  ],
+ "readiness": {
+  "green": {
+   "label": "Good to go",
+   "text": "Slept all right, feel normal: do the card as written."
+  },
+  "yellow": {
+   "label": "So-so",
+   "text": "Poor sleep, unusual soreness or low energy: stop every set with 3 good reps left and drop one set from each lift. Ride days: easy pace only; swap the 4×4 for an easy ride."
+  },
+  "red": {
+   "label": "Not today",
+   "text": "Sick, dizzy, chest pressure, faintness or unusual breathlessness: no workout today. Rest, and get checked if it doesn't pass."
+  }
+ },
  "phases": {
   "1": "Learn the moves",
   "2": "Learn the moves",
