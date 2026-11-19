@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 START = dt.date(2026, 11, 16)  # Monday, week 1 day 1
 WEEKS = 12
 PAGE = "https://makingperfectmoves-oss.github.io/max-fitness-today/"
-VERSION = "v4.2 (Nov 16 2026): new design, longevity core and daily stretch. Refined after the knowledge base is built."
+VERSION = "v5.0 (Nov 19 2026): Codex's moving demos, start-to-finish pictures, ride timer and wind plan, and readiness check, merged into v4.2."
 
 
 def search(q):
@@ -31,6 +31,28 @@ def yt(vid, t, title, by=""):
 def page(url, title, by):
     """A written guide or a short loop on another site."""
     return {"url": url, "title": title, "by": by}
+
+
+def clip(src, by, note=""):
+    """A short silent loop of the move (plays on the page, no sound)."""
+    d = {"src": src, "by": by}
+    if note: d["note"] = note
+    return d
+
+
+def ath(path, note=""):
+    return clip("https://cfvideo.athleanx.com/" + path, "ATHLEAN-X", note)
+
+
+def fb(num, note=""):
+    return clip(f"https://app-media-r2.fitbod.me/v2/{num}/videos/full_720p.mp4", "Fitbod", note)
+
+
+def pic(file, cap="Start → finish", note=""):
+    """Still pictures of the move, from Codex's Workout Hub."""
+    d = {"src": "img/" + file, "cap": cap}
+    if note: d["note"] = note
+    return d
 
 
 # ---------- Evidence (study names; links where checked) ----------
@@ -73,19 +95,23 @@ PHASES = {
 }
 
 # ---------- Warm-up for lifting days: four parts, about 12 minutes ----------
-def move(name, dose, cue, home, gym, source, video=None, why=""):
+def move(name, dose, cue, home, gym, source, video=None, why="", clip=None, pic=None):
     d = {"name": name, "dose": dose, "cue": cue, "home": home, "gym": gym, "source": source, "demo": search(name + " " + source.split(" · ")[0])}
     if video: d["video"] = video
     if why: d["why"] = why
+    if clip: d["clip"] = clip
+    if pic: d["pic"] = pic
     return d
 
 
 WARMUP = [
     {"part": "Raise temperature", "minutes": 2, "goal": "Get warm and a little out of breath.", "items": [
         move("March or jumping jacks", "1 min", "Easy pace, arms swinging. You should feel warm, not tired.",
-             "In place, on the floor.", "Same, or 2 min on a bike or rower.", "ACSM warm-up guidance"),
+             "In place, on the floor.", "Same, or 2 min on a bike or rower.", "ACSM warm-up guidance",
+             clip=clip("https://bellinghamathleticclub.com/wp-content/uploads/2020/05/Warmup-Marching-in-place.mp4", "Bellingham Athletic Club"),
+             pic=pic("march.jpg")),
         move("Bodyweight squats", "10 slow reps", "Sit between your hips, heels down, stand tall.",
-             "Floor.", "Floor.", "Jeff Nippard"),
+             "Floor.", "Floor.", "Jeff Nippard", pic=pic("bodyweight-squat.jpg", "Start · do · avoid (heels up, knees in)")),
     ]},
     {"part": "Joint armor", "minutes": 5, "goal": "Knees, ankles and shins ready for load.", "items": [
         move("Backward walk", "1–2 min", "Small steps on the balls of your feet. You'll feel the front of your thighs work.",
@@ -110,7 +136,8 @@ WARMUP = [
         move("Squat to stand", "5 slow reps", "Hold your toes, drop the hips into a squat, chest up, then straighten the legs.",
              "Floor.", "Floor.", "CaliMove", yt("x81rwumG3bE", 108, "Squat-to-toe-touch mobility", "CaliMove")),
         move("Shoulder prep", "8 arm circles, 6 swings", "Big slow circles forward and back, then cross-body arm swings.",
-             "Floor.", "Or a light band pull-apart.", "Jeff Nippard", yt("E81GN-3A8XM", 442, "Dynamic shoulder preparation", "Jeff Nippard")),
+             "Floor.", "Or a light band pull-apart.", "Jeff Nippard", yt("E81GN-3A8XM", 442, "Dynamic shoulder preparation", "Jeff Nippard"),
+             clip=fb(729, "Shows the forward circles; add the swings.")),
         move("Dead hang", "20–30 sec", "Hang from the pull-up bar, shoulders relaxed, breathe slowly. No bar: hold two heavy kettlebells at your sides for 30 sec.",
              "Your pull-up bar (no bar: heavy kettlebell hold).", "Pull-up bar.", "ATHLEAN-X · Knees Over Toes",
              why="Opens the shoulders and builds grip, a marker of long life."),
@@ -134,7 +161,7 @@ COOL_LIFT = {
         move("90/90 hip switches", "6 per side", "Sit with both knees bent at 90°, rotate both knees side to side, stay tall.",
              "Floor.", "Floor or a mat.", "JR Stretch", yt("fdBakoYR0GU", 203, "90/90 hip switches", "JR Stretch")),
         move("Open book", "5 per side", "Lie on your side, knees bent, open the top arm across to the other side, follow it with your eyes.",
-             "Floor.", "Floor or a mat.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch")),
+             "Floor.", "Floor or a mat.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch"), clip=fb(3353)),
         move("Dead hang", "30 sec", "Relaxed hang, breathe. No bar: lat stretch on all fours (sink hips back, arms long).",
              "Your pull-up bar (no bar: all-fours lat stretch).", "Pull-up bar.", "Movement by David",
              yt("eQHmKJh20_c", 403, "All-fours lat stretch (no-bar option)", "Movement by David")),
@@ -158,9 +185,10 @@ COOL_RIDE = {
              "Floor.", "Floor.", "JR Stretch", yt("dWOgSebEAAM", 99, "Hinged hamstring rocks", "JR Stretch")),
         move("Half-kneeling hip flexor", "30 sec per side", "Back knee down on a cushion, tuck the hips under, lean forward a little.",
              "Floor, cushion under the knee.", "Floor or a mat.", "Movement by David",
-             yt("eQHmKJh20_c", 26, "Half-kneeling hip-flexor lunge", "Movement by David")),
+             yt("eQHmKJh20_c", 26, "Half-kneeling hip-flexor lunge", "Movement by David"),
+             clip=fb(485), pic=pic("hip-flexor.jpg", "The position")),
         move("Calf stretch", "30 sec per side", "Hands on the wall, back leg straight, heel down.",
-             "Against any wall.", "Against any wall.", "JR Stretch"),
+             "Against any wall.", "Against any wall.", "JR Stretch", pic=pic("calf-stretch.jpg", "Back leg straight, heel down")),
         move("Physiological sighs", "1 min", "Two nose inhales, one long exhale.",
              "Anywhere.", "Anywhere.", "Huberman", why=EV["sigh"]["text"]),
     ],
@@ -168,13 +196,16 @@ COOL_RIDE = {
 
 # ---------- Main lifts ----------
 def lift(name, sets, reps, rest, why, setup, steps, avoid, progress, home, gym, source, video, evidence,
-         gym_video=None, no_gear=None, limits=None):
+         gym_video=None, no_gear=None, limits=None, clip=None, pic=None, gym_clip=None):
     d = {"name": name, "sets": sets, "reps": reps, "rest": rest, "why": why, "setup": setup, "steps": steps,
          "avoid": avoid, "progress": progress, "home": home, "gym": gym, "source": source,
          "cue": steps[0], "video": video, "evidence": evidence, "demo": search(name + " " + source.split(" · ")[0])}
     if gym_video: d["gymVideo"] = gym_video
     if no_gear: d["noGear"] = no_gear
     if limits: d["limits"] = limits
+    if clip: d["clip"] = clip
+    if pic: d["pic"] = pic
+    if gym_clip: d["gymClip"] = gym_clip
     return d
 
 
@@ -194,7 +225,8 @@ def lift_a(deload):
              "Goblet squat with one dumbbell or kettlebell.", "Barbell back squat in a rack with safeties, or hack squat, 6–8 reps.",
              "ATHLEAN-X · Jeff Nippard",
              page("https://learn.athleanx.com/articles/legs-for-men/how-to-do-goblet-squats", "How to do goblet squats", "ATHLEAN-X"),
-             ev("acsm", "volume"), gym_video=yt("kIXcoivzGf8", 276, "Hack squat", "Jeff Nippard")),
+             ev("acsm", "volume"), gym_video=yt("kIXcoivzGf8", 276, "Hack squat", "Jeff Nippard"),
+             clip=ath("2024/06/Goblet-squat.mp4"), pic=pic("goblet-squat.jpg", "Start · do · avoid (knees caving)"), gym_clip=fb(157)),
         lift("Floor press", s, "8–10", 120,
              "Your pressing strength for chest, shoulders and triceps. The floor stops the elbows at a shoulder-friendly depth, so no bench is needed.",
              "Lie on the floor, knees bent, a dumbbell in each hand over your chest.",
@@ -205,7 +237,8 @@ def lift_a(deload):
              "Dumbbell floor press, lying on the floor.", "Flat dumbbell bench press.",
              "ATHLEAN-X · Jeff Nippard",
              page("https://learn.athleanx.com/articles/how-to-do-the-floor-press", "How to do the floor press", "ATHLEAN-X"),
-             ev("acsm"), gym_video=yt("fGm-ef-4PVk", 215, "Flat dumbbell bench press", "Jeff Nippard")),
+             ev("acsm"), gym_video=yt("fGm-ef-4PVk", 215, "Flat dumbbell bench press", "Jeff Nippard"),
+             clip=ath("2020/02/dumbbell-floor-press.mp4"), pic=pic("floor-press.jpg", "Start → finish", "Picture shows a barbell; dumbbells move the same way."), gym_clip=fb(100)),
         lift("Pull-up", s, "5–10", 120,
              "The best upper-back and arm builder there is, and it trains the grip that tracks with a long life.",
              "Hands on the bar a little wider than your shoulders, palms facing away.",
@@ -215,7 +248,7 @@ def lift_a(deload):
              "Fewer than 5? Jump to the top and lower slowly for 5 seconds, 5 reps (no band needed). When you hit 3 × 10, hold a dumbbell between your feet.",
              "Your pull-up bar.", "Pull-ups, or neutral-grip lat pulldown for 8–10.",
              "Jeff Nippard · CaliMove", yt("Hdc7Mw6BIEE", 0, "The best way to do pull-ups for a wide back"),
-             ev("acsm", "grip"), gym_video=yt("jLvqKgW-_G8", 239, "Neutral-grip lat pulldown", "Jeff Nippard"),
+             ev("acsm", "grip"), gym_video=yt("jLvqKgW-_G8", 239, "Neutral-grip lat pulldown", "Jeff Nippard"), gym_clip=fb(429),
              no_gear="No bar: one-arm dumbbell row, other hand on the chair seat, 10 per side."),
         lift("Romanian deadlift", s, "8–10", 120,
              "Builds the hamstrings and glutes and teaches the hip hinge that protects your back when you lift anything.",
@@ -226,7 +259,7 @@ def lift_a(deload):
              DOUBLE,
              "Barbell or two dumbbells.", "Barbell Romanian deadlift.",
              "ATHLEAN-X · Jeff Nippard", yt("uYG3CneV-Pw", 179, "Dumbbell Romanian deadlift", "ATHLEAN-X"),
-             ev("acsm")),
+             ev("acsm"), clip=ath("2024/03/Romanian-deadlift-with-dumbbells.mp4")),
         lift("Bulgarian split squat", 2, "8–10 per side", 90,
              "One leg at a time: strength, balance and knee health in one move, with no bench needed.",
              "Stand about two feet in front of the chair, top of your back foot on the seat.",
@@ -237,6 +270,16 @@ def lift_a(deload):
              "Back foot on the chair seat, dumbbells when bodyweight gets easy.", "Back foot on a bench, dumbbells.",
              "Knees Over Toes · Jeff Nippard", yt("_yWl3DxRCJY", 0, "Bulgarian split squat guide"),
              ev("acsm", "balance")),
+        lift("Lateral raise", s, "12–15", 60,
+             "Side shoulders give the upper body its width, and the big presses barely train them. Light weight, strict form.",
+             "Stand tall, a light dumbbell in each hand at your sides, elbows slightly bent.",
+             ["Raise the arms out to the sides, leading with the elbows, up to shoulder height.",
+              "Pause a moment, then lower slowly, about 2–3 seconds.", "Keep the shoulders down, away from the ears."],
+             "Swinging the body, shrugging, going heavy and using momentum.",
+             "Add reps before weight; the smallest dumbbell step is a big jump here. " + DOUBLE,
+             "Two light dumbbells.", "Cable or dumbbell lateral raise.",
+             "Jeff Nippard · ATHLEAN-X", page("https://fitbod.me/exercises/dumbbell-lateral-raise", "Dumbbell lateral raise", "Fitbod"),
+             ev("volume"), pic=pic("lateral-raise.jpg")),
         lift("Ab wheel rollout", s, "6–10", 60,
              "Trains the core to stop the lower back from arching: the core's real job when you lift and carry.",
              "Kneel on a folded towel, hands on the wheel under your shoulders.",
@@ -255,7 +298,7 @@ def lift_a(deload):
              "Add weight when 40 m feels easy. A strong long-term target: your body weight split between both hands.",
              "Two kettlebells (or dumbbells).", "Heavy dumbbells or a trap bar.",
              "ATHLEAN-X · Peter Attia", yt("R6gZoAzAhCg", 378, "Farmer carry", "ATHLEAN-X"),
-             ev("grip")),
+             ev("grip"), clip=ath("2019/07/farmers-carry.mp4")),
     ]
 
 
@@ -280,7 +323,7 @@ def lift_b(deload):
              DOUBLE,
              "Seated dumbbell press, back against the chair.", "Standing dumbbell or barbell overhead press.",
              "ATHLEAN-X · Jeff Nippard", yt("cxn0l7ejTbc", 140, "Dumbbell overhead press", "ATHLEAN-X"),
-             ev("acsm")),
+             ev("acsm"), clip=ath("2019/12/chVYfo3XRd5tWPzQGI.mp4", "Demo is standing; you sit with your back on the chair.")),
         lift("Row", s, "8–10", 90,
              "Balances all the pressing and sitting: upper back, rear shoulders and posture.",
              "Bent over with a flat back holding the barbell, or one hand on the chair seat with a dumbbell in the other.",
@@ -289,7 +332,8 @@ def lift_b(deload):
              DOUBLE,
              "Bent-over barbell row, or one-arm dumbbell row with a hand on the chair.", "Chest-supported row or cable row.",
              "Jeff Nippard · ATHLEAN-X", yt("jLvqKgW-_G8", 533, "Rows (chest-supported shown)", "Jeff Nippard"),
-             ev("acsm", "volume")),
+             ev("acsm", "volume"), clip=ath("2020/02/dumbbell-tripod-row.mp4", "Demo braces on a bench; your free hand goes on the chair seat."),
+             pic=pic("row.jpg", "Start → finish, hand on the chair"), gym_clip=fb(546)),
         lift("Knee strength", 2, "6–10", 90,
              "Strengthens the front of the knee and thigh through a long range, a Knees Over Toes staple for durable knees.",
              "Kneel on a folded towel, knees hip-width, body straight from knees to head.",
@@ -300,6 +344,16 @@ def lift_b(deload):
              "Reverse Nordic on the floor, then single-leg glute bridges.", "Nordic curl on a Nordic bench, or lying leg curl for 8–12.",
              "Knees Over Toes", yt("zl1m3DoiAec", 0, "Reverse Nordic"),
              ev("acsm"), limits="Coach-led drill. Long-range knee work is well supported; research on this exact drill is limited."),
+        lift("Calf raise", 2, "12–15 per side", 60,
+             "Strong calves and Achilles carry the ankles and knees through every step, stair and pedal stroke. A Knees Over Toes staple.",
+             "Stand on one foot on a stair edge or the flat floor, fingertips on the wall or the chair back for balance.",
+             ["Rise as high as you can onto the ball of the foot.", "Pause 1 second at the top.",
+              "Lower slowly, about 3 seconds, heel all the way down (below the step if you use one)."],
+             "Bouncing, rolling onto the outside of the foot, rushing the way down.",
+             "When 15 slow reps per side are easy, hold a dumbbell in the same-side hand.",
+             "One leg at a time, on a stair or the floor.", "Standing or seated calf-raise machine, or the same on a step.",
+             "Knees Over Toes · NHS", page("https://www.nhs.uk/live-well/exercise/strength-exercises/", "Calf raises, step by step", "NHS"),
+             ev("acsm")),
         lift("Curl and triceps", 2, "10–12 each", 60,
              "Direct arm work adds size the big lifts miss, for little time.",
              "Stand with a dumbbell in each hand.",
@@ -310,7 +364,7 @@ def lift_b(deload):
              "Dumbbell curls, then an overhead dumbbell extension.", "Cable or dumbbell curls, then cable overhead extension.",
              "ATHLEAN-X · Jeff Nippard",
              page("https://learn.athleanx.com/articles/how-to-do-bicep-curls", "How to do bicep curls", "ATHLEAN-X"),
-             ev("volume")),
+             ev("volume"), clip=ath("2019/04/dumbbell_biceps_curl.mp4", "Shows the curl; the triceps press follows.")),
         lift("Hanging knee raise", s, "8–12", 60,
              "Lower abs and grip together, plus a free shoulder stretch from the hang.",
              "Hang from the bar, shoulders active.",
@@ -337,7 +391,7 @@ def lift_b(deload):
              "Add weight when 30 m feels easy.",
              "One kettlebell.", "One heavy dumbbell.",
              "ATHLEAN-X", yt("ixkQaZXVQjs", 452, "Suitcase carry", "ATHLEAN-X"),
-             ev("grip")),
+             ev("grip"), clip=ath("2021/01/suitcase-carry.mp4")),
     ]
 
 
@@ -358,6 +412,11 @@ def easy_minutes(w):
     return {1: 45, 2: 45, 3: 50, 4: 50, 5: 55}.get(w, 60)
 
 
+def blk(a, b, name, effort, cue, win, zone):
+    """One block of the ride, minute a to minute b (from Codex's v3 ride timeline)."""
+    return {"from": a, "to": b, "name": name, "effort": effort, "cue": cue, "win": win, "zone": zone}
+
+
 def easy_ride(w, day):
     m = easy_minutes(w)
     return {
@@ -373,6 +432,11 @@ def easy_ride(w, day):
         "source": "Zone 2 research (Peter Attia, Huberman)",
         "safety": "6:00 is still dark until about 6:40: front and rear lights on.",
         "prep": PREP, "effort": EFFORT, "cooldown": COOL_RIDE,
+        "timeline": [
+            blk(0, 5, "Easy warm-up", "2–3 out of 10", "Spin an easy gear and let your cadence rise.", "Warm, no strain.", "easy"),
+            blk(5, m - 5, "Steady Zone 2", "3–4 out of 10 · full sentences", "Smooth pace you could hold all morning. If talking gets hard, ease off.", "The last minute feels like the first.", "steady"),
+            blk(m - 5, m, "Easy finish", "2 out of 10", "Light gear, let your breathing settle.", "Talking easily before you stop.", "easy"),
+        ],
         "swap": True,
     }
 
@@ -398,8 +462,23 @@ def four_by_four(w):
         "source": "Norwegian 4×4 (Helgerud et al.)",
         "safety": "Pick a quiet stretch of road with no stop lights for the hard rounds. Lights on in the dark.",
         "prep": PREP, "effort": EFFORT, "cooldown": COOL_RIDE,
+        "timeline": interval_timeline(rounds, hard, easy, effort),
         "swap": True,
     }
+
+
+def interval_timeline(rounds, hard, easy, effort):
+    t = [blk(0, 5, "Easy warm-up", "2–3 out of 10", "Spin an easy gear.", "Warm, no strain.", "easy"),
+         blk(5, 10, "Build to moderate", "5–6 out of 10", "Raise the effort a little each minute.", "Ready for the first hard round.", "steady")]
+    m = 10
+    for r in range(1, rounds + 1):
+        t.append(blk(m, m + hard, f"Hard round {r} of {rounds}", f"{effort} · a few words at a time",
+                     "Strong and steady, not a sprint. Sit down, smooth pedals.", "Same power at the end of the round as the start.", "hard"))
+        m += hard
+        t.append(blk(m, m + easy, "Easy spin", "2–3 out of 10", "Light gear, breathe it down.", "Breathing settles before the next round.", "easy"))
+        m += easy
+    t.append(blk(m, m + 5, "Easy finish", "2 out of 10", "Light gear, let your breathing settle.", "Talking easily before you stop.", "easy"))
+    return t
 
 
 SWAP = {
@@ -420,15 +499,15 @@ SWAP = {
 
 MOBILITY = [
     move("Cat-cow", "10 slow reps", "On all fours, round the back up, then let it sink, moving one segment at a time.",
-         "Floor.", "Floor or a mat.", "Fitbod", page("https://fitbod.me/exercises/cat-cow", "Cat-cow", "Fitbod")),
+         "Floor.", "Floor or a mat.", "Fitbod", page("https://fitbod.me/exercises/cat-cow", "Cat-cow", "Fitbod"), pic=pic("cat-cow.jpg", "Sink, then round")),
     move("90/90 hip switches", "10", "Both knees at 90°, rotate side to side, stay tall.",
          "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 203, "90/90 hip switches", "JR Stretch")),
     move("Deep squat rocks", "1 min", "Sink into a deep squat, holding the chair if needed, rock gently side to side.",
          "Floor, chair for support.", "Floor.", "JR Stretch", yt("dWOgSebEAAM", 225, "Deep-squat rocks", "JR Stretch")),
     move("Open book", "6 per side", "Side-lying, open the top arm across, follow it with your eyes.",
-         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch")),
+         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch"), clip=fb(3353)),
     move("Figure-four hip stretch", "30 sec per side", "On your back, ankle over the other knee, pull gently.",
-         "Floor.", "Floor.", "Movement by David", yt("eQHmKJh20_c", 285, "Supine figure-four", "Movement by David")),
+         "Floor.", "Floor.", "Movement by David", yt("eQHmKJh20_c", 285, "Supine figure-four", "Movement by David"), clip=fb(489)),
     move("Dead hang", "30–60 sec total", "Relaxed hang (no bar: heavy kettlebell hold).",
          "Pull-up bar.", "Pull-up bar.", "ATHLEAN-X", why=EV["grip"]["text"]),
     move("McGill Big 3", "3 rounds of short holds", "Curl-up, bird dog, side plank: 8–10 sec holds, a few reps each.",
@@ -531,6 +610,13 @@ CORE = [
      "why": "Blood pressure, cholesterol (including ApoB), blood sugar (A1c) and vitamin D catch problems early and guide supplements."},
 ]
 
+# ---------- Readiness check (from Codex's Workout Hub): 30 seconds before you start ----------
+READINESS = {
+    "green": {"label": "Good to go", "text": "Slept all right, feel normal: do the card as written."},
+    "yellow": {"label": "So-so", "text": "Poor sleep, unusual soreness or low energy: stop every set with 3 good reps left and drop one set from each lift. Ride days: easy pace only; swap the 4×4 for an easy ride."},
+    "red": {"label": "Not today", "text": "Sick, dizzy, chest pressure, faintness or unusual breathlessness: no workout today. Rest, and get checked if it doesn't pass."},
+}
+
 # ---------- Daily longevity stretch (10 min, any time) ----------
 STRETCH = [
     move("Couch stretch", "45 sec per side", "Back knee on a cushion against the couch, squeeze that glute, stay tall. Opens the hip flexors that sitting shortens.",
@@ -544,7 +630,7 @@ STRETCH = [
     move("Deep squat hold", "1 min", "Sink into the bottom of a squat, heels down if you can; hold the chair for support.",
          "Floor, chair for support.", "Floor.", "JR Stretch · CaliMove", yt("dWOgSebEAAM", 225, "Deep-squat rocks", "JR Stretch")),
     move("Open book", "6 per side", "Side-lying, open the top arm across, follow it with your eyes.",
-         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch")),
+         "Floor.", "Floor.", "JR Stretch", yt("fdBakoYR0GU", 146, "Side-lying open book", "JR Stretch"), clip=fb(3353)),
     move("Chest opener", "45 sec", "Hold a broomstick or belt behind your shoulders and open the chest in an easy range.",
          "Broomstick or belt.", "Bar or band.", "Movement by David", yt("QaKuVOhikaY", 334, "Chest stretch with broomstick or belt", "Movement by David")),
     move("Dead hang or lat sink", "30–60 sec", "Relaxed hang from the bar. No bar: on all fours, sink your hips back with arms long.",
@@ -563,13 +649,13 @@ def build_week(w):
             d = easy_ride(w, name)
         elif name == "Tuesday":
             d = {"kind": "lift", "title": "Lift A · full body", "minutes": 60,
-                 "summary": "Squat · press · pull-up · Romanian deadlift · split squat · ab wheel · carry",
+                 "summary": "Squat · press · pull-up · Romanian deadlift · split squat · lateral raise · ab wheel · carry",
                  "why": "Full body twice a week: every muscle gets trained twice, which the research favors for muscle and strength.",
                  "evidence": ev("acsm", "volume"),
                  "warmup": WARMUP, "lifts": lift_a(deload), "cooldown": COOL_LIFT, "swap": False}
         elif name == "Thursday":
             d = {"kind": "lift", "title": "Lift B · full body", "minutes": 60,
-                 "summary": "Deadlift · overhead press · row · knee strength · arms · knee raise · side plank · carry",
+                 "summary": "Deadlift · overhead press · row · knee strength · calf raise · arms · knee raise · side plank · carry",
                  "why": "The second full-body day: different lifts for the same muscles, plus knee and core work for the long run.",
                  "evidence": ev("acsm", "volume"),
                  "warmup": WARMUP, "lifts": lift_b(deload), "cooldown": COOL_LIFT, "swap": False}
@@ -633,7 +719,7 @@ def main():
     with open(os.path.join(ROOT, "brief.json"), "w") as f:
         json.dump(lines, f, ensure_ascii=False, indent=1)
     meta = {"version": VERSION, "timeZone": "America/New_York", "startDate": START.isoformat(), "weeks": WEEKS,
-            "core": CORE, "stretch": STRETCH,
+            "core": CORE, "stretch": STRETCH, "readiness": READINESS,
             "phases": {str(k): v[1] for k, v in PHASES.items()},
             "afterLastWeek": "Repeats weeks 7–12 until the next block is published."}
     with open(os.path.join(ROOT, "program.json"), "w") as f:

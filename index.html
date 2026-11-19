@@ -194,6 +194,45 @@
     nav.tabs button[aria-pressed="true"]{color:var(--sun)}
     .timer{position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:999px;font-family:var(--display);font-weight:700;font-size:1.15rem;box-shadow:0 6px 20px rgba(0,0,0,.3);display:none;border:0;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:5;cursor:pointer}
     .timer.on{display:block}
+
+    /* Moving demos and pictures (from Codex's Workout Hub) */
+    .fig{margin:0;border-radius:16px;overflow:hidden;background:var(--faint)}
+    .fig img,.fig video{display:block;width:100%;height:auto;background:#fff}
+    .fig video{aspect-ratio:16/9;object-fit:contain;background:#fff}
+    .fig figcaption{font-size:.78rem;color:var(--soft);padding:6px 10px}
+    .fig.small{max-width:360px;margin-top:8px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+    .chips .fig{flex-basis:100%;margin-top:6px}
+    .mtabs{display:flex;gap:4px;background:var(--faint);border-radius:12px;padding:3px;margin:0 0 8px}
+    .mtabs button{flex:1;border:0;background:transparent;border-radius:9px;padding:6px 4px;font-size:.82rem;font-weight:600;cursor:pointer;min-height:36px;color:var(--soft)}
+    .mtabs button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
+    /* Readiness */
+    .rd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .rb{border:2px solid var(--line);background:var(--card);border-radius:14px;padding:10px 4px;font-weight:700;cursor:pointer;min-height:52px;font-size:.92rem}
+    .rb::before{content:"";display:block;width:12px;height:12px;border-radius:50%;margin:0 auto 4px;background:var(--c)}
+    .rb.green{--c:#1f8a5b}.rb.yellow{--c:#d9a21b}.rb.red{--c:#c8372d}
+    .rb[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}
+    .rd-out{font-size:.9rem;margin:10px 0 0}
+    .callout.ready.yellow{background:color-mix(in srgb,#d9a21b 18%,var(--card))}
+    .callout.ready.red{background:color-mix(in srgb,#c8372d 18%,var(--card))}
+
+    /* Ride timeline and timer */
+    ol.rt{list-style:none;margin:12px 0 0;padding:0}
+    ol.rt li{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:10px 8px;border-left:4px solid var(--zc);border-radius:0 12px 12px 0;margin:0 0 6px;background:var(--faint)}
+    ol.rt li.now{background:color-mix(in srgb,var(--zc) 22%,var(--card));box-shadow:0 0 0 2px var(--zc)}
+    ol.rt .mm{font-family:var(--display);font-weight:700;font-size:.9rem}
+    ol.rt b{font-size:.98rem}
+    ol.rt .eff{font-size:.82rem;color:var(--soft)}
+    ol.rt p{margin:2px 0;font-size:.88rem}
+    ol.rt p.win{color:var(--soft);font-size:.82rem}
+    .ridebar{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));max-width:38rem;margin:0 auto;background:var(--ink);color:var(--bg);border-left:8px solid var(--zc,var(--ride));border-radius:16px;padding:10px 16px;display:none;z-index:5;box-shadow:0 6px 20px rgba(0,0,0,.3);font-variant-numeric:tabular-nums}
+    .ridebar.on{display:block}
+    .ridebar b{display:block;font-family:var(--display);font-size:1.25rem}
+    .ridebar span{font-size:.82rem;opacity:.85}
+    .wx.bad{background:color-mix(in srgb,#c8372d 16%,var(--card))}
+    ul.wxl{margin:6px 0 4px;padding-left:1.1rem}
+    ul.wxl li{margin:3px 0}
     footer{color:var(--soft);font-size:.8rem;margin-top:28px}
   </style>
 </head>
@@ -218,11 +257,12 @@
     <main id="main" aria-live="polite"><p>Loading today's workout.</p></main>
     <footer>
       <p>General fitness programming, not medical advice. Stop for chest pain, faintness, unusual breathlessness or sharp pain.</p>
-      <p>Videos belong to their creators and play from YouTube. Ticks and weights stay on this phone only.</p>
+      <p>Videos belong to their creators and play from YouTube. Moving demos play from ATHLEAN-X, Fitbod and the other sites named under each one. Pictures come from Codex's Workout Hub. Ticks, weights, your readiness answer and your location stay on this phone only.</p>
       <p id="version"></p>
     </footer>
   </div>
   <button type="button" class="timer" id="timer" aria-live="polite">Rest</button>
+  <div class="ridebar" id="ridebar" aria-live="polite"></div>
   <nav class="tabs" aria-label="Views"><div>
     <button type="button" id="tab-today" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Today</button>
     <button type="button" id="tab-week" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Week</button>
